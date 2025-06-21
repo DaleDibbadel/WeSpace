@@ -1,0 +1,22 @@
+name: 🚀 Deploy to ZimaBlade
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Pull on ZimaBlade
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.ZIMA_HOST }}
+          username: ${{ secrets.ZIMA_USER }}
+          key: ${{ secrets.ZIMA_KEY }}
+          script: |
+            cd /home/casaos/helpdesk
+            git pull origin main
