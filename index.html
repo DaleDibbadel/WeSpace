@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MollywhoppinRBG</title>
+  <link rel="icon" href="favicon.png" type="image/png">
+  <style>
+    html, body {
+      margin:0; padding:0;
+      width:100%; height:100%;
+      overflow:hidden; background:black;
+      font-family:Arial,sans-serif;
+      color:#0E173D;
+      position:relative;
+    }
+
+    /* Drifting "bingbing" text */
+    #animBox {
+      position:absolute; top:10px; left:10px;
+      font-size:14px; font-weight:bold;
+      color:rgba(14,23,61,0.6);
+      pointer-events:none;
+      animation: moveEdge 120s linear infinite;
+      z-index:1;
+    }
+    #animBox.paused { animation-play-state: paused; }
+    @keyframes moveEdge {
+      0%   { top:10px; left:10px; }
+      25%  { top:calc(100% - 30px); left:10px; }
+      50%  { top:calc(100% - 30px); left:calc(100% - 100px); }
+      75%  { top:10px; left:calc(100% - 100px); }
+      100% { top:10px; left:10px; }
+    }
+
+    /* Yin-Yang background */
+    body::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: url("fox.jpg") no-repeat center center;
+      background-size: contain;
+      background-color: black;
+      z-index: 0;
+      animation: spin 60s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    /* Content Box */
+    .content {
+      position:absolute; top:40px; left:40px;
+      max-width:440px; padding:10px;
+      background:rgba(0,0,0,0.15);
+      z-index:2;
+    }
+    .content h1 {
+      margin-bottom:8px; font-size:16px;
+    }
+    .content p {
+      margin-bottom:12px; font-size:12px;
+    }
+
+    /* Pause toggle */
+    #toggle {
+      position:absolute; top:8px; left:8px;
+      font-size:24px; cursor:pointer; user-select:none;
+      z-index:3;
+      color:#0E173D;
+    }
+
+    /* Reveal-on-hover boxes */
+    .reveal-container {
+      display:flex; gap:10px; margin-top:12px; z-index:2;
+    }
+    .reveal-container .box {
+      width:100px; height:40px;
+      background:rgba(0,0,0,0.15);
+      border:none;
+      position:relative; overflow:hidden;
+      cursor:pointer; transition:background 0.5s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .reveal-container .box span {
+      position:absolute; top:100%; left:0; right:0;
+      text-align:center; color:#0E173D; font-weight:bold;
+      transition:top 0.4s;
+    }
+    .reveal-container .box:hover {
+      background:rgba(247,183,51,1);
+    }
+    .reveal-container .box:hover span {
+      top:0;
+    }
+
+    /* Footer */
+    .footer {
+      position:absolute; bottom:10px; left:12px;
+      font-size:11px; z-index:2;
+      color:#0E173D;
+    }
+    .logo-link {
+      position:absolute; bottom:12px; right:20px;
+      font-size:13px; text-decoration:underline;
+      animation:pulse 2s infinite; z-index:2;
+      color:#ffa500;
+    }
+    @keyframes pulse {
+      0%,100% { opacity:1; }
+      50%     { opacity:0.6; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Pause/resume bingbing -->
+  <div id="toggle">(͡ ° ͜ʖ ͡ °)</div>
+
+  <!-- Drifting text -->
+  <div id="animBox">bingbing</div>
+
+  <!-- Content + hover boxes -->
+  <div class="content">
+    <h1>
+      Welcome to homeguardofbill-huoc.com,<br>
+      we are here to help.<br>
+      Alex will assist you.
+    </h1>
+    <p>Hover each box to reveal and launch:</p>
+    <div class="reveal-container">
+      <div class="box" onclick="window.open('https://startcontrol.com/alex','_blank')">
+        <span>Option 1</span>
+      </div>
+      <div class="box" onclick="window.open('https://startcontrol.com/alex/start','_blank')">
+        <span>Option 2</span>
+      </div>
+      <div class="box" onclick="window.open('https://outlook.office.com/bookwithme/...ep=mlink','_blank')">
+        <span>PushToBook</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Hosted by Alex</div>
+  <a class="logo-link" href="https://homeguardofbill-huoc.com" target="_blank">HOMEGUARDOFBILL-HUOC.COM</a>
+
+  <script>
+    document.getElementById('toggle').onclick = () => {
+      document.getElementById('animBox').classList.toggle('paused');
+    };
+  </script>
+</body>
+</html>
