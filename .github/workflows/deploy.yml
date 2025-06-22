@@ -3,20 +3,46 @@ name: 🚀 Deploy to ZimaBlade
 on:
   push:
     branches: [ main ]
+    paths:
+      - 'index.html'
+      - '.github/workflows/**'
+      - 'deploy.yml'
+      - 'Dockerfile'
+      - 'favicon.png'
+      - '**/*.css'
+      - '**/*.js'
+      - 'assets/**'            # optional if you have an assets folder
+      - '!indexTestBed.html'   # explicitly ignored (redundant but safe)
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+
+      # 1️⃣ Grab your code from GitHub
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # 2️⃣ Trust your ZimaBlade’s SSH host key
+      - name: Add ZimaBlade to known_hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H "${{ secrets.ZIMA_HOST }}" >> ~/.ssh/known_hosts
+
+      # 3️⃣ Install (decode) your private key
+      - name: Install SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.ZIMA_KEY }}" | base64 --decode > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+
+      # 4️⃣ SSH in and pull the latest on your server
       - name: Pull on ZimaBlade
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.ZIMA_HOST }}
-          username: ${{ secrets.ZIMA_USER }}
-          key: ${{ secrets.ZIMA_KEY }}
+          host:        ${{ secrets.ZIMA_HOST }}
+          username:    ${{ secrets.ZIMA_USER }}
+          key_path:    ~/.ssh/id_ed25519
           script: |
             cd /home/casaos/helpdesk
             git pull origin main
