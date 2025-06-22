@@ -28,5 +28,5 @@ jobs:
         run: |
           cd /home/casaos/helpdesk
           git fetch origin main
-          git checkout origin/main -- index.html favicon.png Dockerfile assets/
+          git reset --hard origin/main
           git clean -fd
