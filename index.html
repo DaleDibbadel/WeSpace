@@ -100,15 +100,29 @@
       font-size:11px; z-index:2;
       color:#0E173D;
     }
+
     .logo-link {
       position:absolute; bottom:12px; right:20px;
       font-size:13px; text-decoration:underline;
       animation:pulse 2s infinite; z-index:2;
       color:#ffa500;
     }
+
     @keyframes pulse {
       0%,100% { opacity:1; }
       50%     { opacity:0.6; }
+    }
+
+    /* Gold K */
+    .gold-k {
+      position:absolute;
+      top:50%;
+      left:12px;
+      transform:translateY(-50%);
+      font-size:32px;
+      font-weight:bold;
+      color:gold;
+      z-index:3;
     }
   </style>
 </head>
@@ -118,6 +132,9 @@
 
   <!-- Drifting text -->
   <div id="animBox">bingbing</div>
+
+  <!-- Gold K -->
+  <div class="gold-k">K</div>
 
   <!-- Content + hover boxes -->
   <div class="content">
