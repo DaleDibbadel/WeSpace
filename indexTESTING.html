@@ -75,24 +75,26 @@
       display: block;
     }
     .reveal-container {
-      display: flex; gap: 12px; margin-bottom: 6px;
+      display:flex; gap:10px; margin-top:12px; z-index:2;
     }
     .reveal-container .box {
-      padding: 8px 18px;
-      font-size: 15px;
-      border: none;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
-      opacity: 0.95;
-      transition: background 0.25s;
-      cursor: pointer;
-      user-select: none;
-      font-family: inherit;
+      width:100px; height:40px;
+      background:rgba(0,0,0,0.15);
+      border:none;
+      position:relative; overflow:hidden;
+      cursor:pointer; transition:background 0.5s;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .reveal-container .box span {
+      position:absolute; top:100%; left:0; right:0;
+      text-align:center; color:#0E173D; font-weight:bold;
+      transition:top 0.4s;
     }
     .reveal-container .box:hover {
-      background: #364aad;
-      color: #fff;
+      background:rgba(247,183,51,1);
+    }
+    .reveal-container .box:hover span {
+      top:0;
     }
     /* Pacman (BingBong) */
     #bingbong-wrap {
@@ -138,9 +140,15 @@
     <span class="assist">Alex will assist you.</span>
     <span class="hint">Hover each box to reveal and launch:</span>
     <div class="reveal-container">
-      <button class="box">Option 1</button>
-      <button class="box">Option 2</button>
-      <button class="box">ToBook</button>
+      <div class="box" onclick="window.open('https://startcontrol.com/alex','_blank')">
+        <span>Option 1</span>
+      </div>
+      <div class="box" onclick="window.open('https://startcontrol.com/alex/start','_blank')">
+        <span>Option 2</span>
+      </div>
+      <div class="box" onclick="window.open('https://outlook.office.com/bookwithme/...ep=mlink','_blank')">
+        <span>PushToBook</span>
+      </div>
     </div>
   </div>
   <!-- PACMAN (BINGBONG) -->
@@ -156,6 +164,49 @@
     let x = 40, y = 40;
     let vx = 2.4, vy = 2.3;
     let moving = false, animFrame;
+
+    // Smoke trail canvas (4k resolution)
+    const smokeCanvas = document.createElement('canvas');
+    smokeCanvas.width = Math.max(4096, window.innerWidth);
+    smokeCanvas.height = Math.max(2160, window.innerHeight);
+    Object.assign(smokeCanvas.style, {
+      position: 'fixed', inset: 0, pointerEvents: 'none', zIndex: 5,
+      width: '100%', height: '100%'
+    });
+    document.body.appendChild(smokeCanvas);
+    const sctx = smokeCanvas.getContext('2d');
+
+    const redOverlay = document.createElement('div');
+    Object.assign(redOverlay.style, {
+      position: 'fixed', inset: 0, background: 'red', opacity: 0,
+      pointerEvents: 'none', zIndex: 6, transition: 'opacity 1s'
+    });
+    document.body.appendChild(redOverlay);
+
+    let smokeCount = 0;
+    function drawSmoke(px, py) {
+      const radius = 30 + Math.random() * 20;
+      const g = sctx.createRadialGradient(px, py, 0, px, py, radius);
+      g.addColorStop(0, 'rgba(200,200,200,0.6)');
+      g.addColorStop(1, 'rgba(200,200,200,0)');
+      sctx.fillStyle = g;
+      sctx.beginPath();
+      sctx.arc(px, py, radius, 0, Math.PI * 2);
+      sctx.fill();
+      smokeCount++;
+      if (smokeCount > 200) triggerRed();
+    }
+    function clearSmoke() {
+      sctx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+      smokeCount = 0;
+    }
+    function triggerRed() {
+      redOverlay.style.opacity = '1';
+      setTimeout(() => {
+        redOverlay.style.opacity = '0';
+        clearSmoke();
+      }, 1000);
+    }
     function getCircleBounds() {
       const ww = window.innerWidth, wh = window.innerHeight;
       return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
@@ -167,20 +218,21 @@
       const dist = Math.sqrt((cx-c.x)**2 + (cy-c.y)**2);
       return dist + size/2 > c.r;
     }
-    function movePacman() {
-      let nx = x + vx, ny = y + vy;
-      if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
-      if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
-      if (!intersectsCircle(nx, ny, pacSize)) {
-        x = nx;
-        y = ny;
-      } else {
-        vx = -vx; vy = -vy; x += vx; y += vy;
+      function movePacman() {
+        let nx = x + vx, ny = y + vy;
+        if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
+        if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
+        if (!intersectsCircle(nx, ny, pacSize)) {
+          x = nx;
+          y = ny;
+        } else {
+          vx = -vx; vy = -vy; x += vx; y += vy;
+        }
+        drawSmoke(x + pacSize / 2, y + pacSize / 2);
+        bingbong.style.left = x + 'px';
+        bingbong.style.top = y + 'px';
+        if (moving) animFrame = requestAnimationFrame(movePacman);
       }
-      bingbong.style.left = x + 'px';
-      bingbong.style.top = y + 'px';
-      if (moving) animFrame = requestAnimationFrame(movePacman);
-    }
     function startPacman() {
       bingbong.style.opacity = "1";
       if (!moving) {
@@ -206,6 +258,8 @@
     window.addEventListener('resize', () => {
       if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
       if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
+      smokeCanvas.width = Math.max(4096, window.innerWidth);
+      smokeCanvas.height = Math.max(2160, window.innerHeight);
     });
   </script>
 </body>
