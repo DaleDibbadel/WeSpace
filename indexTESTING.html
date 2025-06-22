@@ -22,15 +22,83 @@
       background-color: black;
       z-index: 0;
       animation: spin 60s linear infinite;
+      pointer-events: none;
     }
     @keyframes spin {
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    #stop-btn {
+      position: absolute;
+      top: 22px;
+      left: 22px;
+      font-size: 38px;
+      font-family: Arial, serif;
+      z-index: 12;
+      cursor: pointer;
+      color: #faf5d7;
+      user-select: none;
+      background: none;
+      border: none;
+      filter: drop-shadow(0 1px 2px #0009);
+      transition: transform 0.1s;
+    }
+    #stop-btn:active { transform: scale(0.96);}
+    .header-content {
+      position: absolute;
+      top: 45px;
+      left: 100px;
+      z-index: 4;
+      max-width: 450px;
+      color: #2e3486;
+      font-size: 17px;
+      user-select: text;
+    }
+    .header-content a { color: #2196F3; text-decoration:none;}
+    .header-content a:hover { text-decoration: underline; }
+    .header-content .subtitle {
+      color: #6dd5fc;
+      font-size: 15px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .header-content .assist {
+      color: #7ef07e;
+      font-size: 15px;
+      margin-bottom: 10px;
+      display: block;
+    }
+    .header-content .hint {
+      color: #888;
+      font-size: 12px;
+      margin-bottom: 18px;
+      display: block;
+    }
+    .reveal-container {
+      display: flex; gap: 12px; margin-bottom: 6px;
+    }
+    .reveal-container .box {
+      padding: 8px 18px;
+      font-size: 15px;
+      border: none;
+      border-radius: 6px;
+      background: #222;
+      color: #fff;
+      opacity: 0.95;
+      transition: background 0.25s;
+      cursor: pointer;
+      user-select: none;
+      font-family: inherit;
+    }
+    .reveal-container .box:hover {
+      background: #364aad;
+      color: #fff;
+    }
+    /* Pacman (BingBong) */
     #bingbong-wrap {
       position: absolute;
-      width: 80px;
-      height: 80px;
+      width: 65px;
+      height: 65px;
       z-index: 10;
       user-select: none;
       pointer-events: none;
@@ -38,7 +106,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      background: none;
+      transition: opacity 0.2s;
     }
     .pacman {
       width: 100%;
@@ -49,15 +117,12 @@
         radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
       clip-path: polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
       position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
       overflow: hidden;
     }
     .pacman-eye {
       position: absolute;
-      left: 42px; top: 18px;
-      width: 9px; height: 9px;
+      left: 38px; top: 17px;
+      width: 7px; height: 7px;
       background: #222;
       border-radius: 50%;
       z-index: 2;
@@ -65,20 +130,32 @@
   </style>
 </head>
 <body>
-  <!-- Your normal text and content up here if needed -->
-  <div id="bingbong-wrap">
+  <!-- STOP BUTTON -->
+  <button id="stop-btn">(͡ ° ͜ʖ ͡ °)</button>
+  <!-- HEADER TEXT AND BUTTONS -->
+  <div class="header-content">
+    <span class="subtitle">Welcome to <a href="https://homeguardofbill-huoc.com" target="_blank">homeguardofbill-huoc.com</a>,<br>we are here to help.</span>
+    <span class="assist">Alex will assist you.</span>
+    <span class="hint">Hover each box to reveal and launch:</span>
+    <div class="reveal-container">
+      <button class="box">Option 1</button>
+      <button class="box">Option 2</button>
+      <button class="box">ToBook</button>
+    </div>
+  </div>
+  <!-- PACMAN (BINGBONG) -->
+  <div id="bingbong-wrap" style="opacity:0;">
     <div class="pacman">
       <div class="pacman-eye"></div>
-      <!-- No text inside Pacman! -->
     </div>
   </div>
   <script>
-    // Pacman (BingBong) movement logic, avoiding the spinning Yin-Yang
+    // === BingBong/Pacman Movement Logic ===
     const bingbong = document.getElementById('bingbong-wrap');
-    const pacSize = 80; // Pacman diameter
-    let x = 30, y = 30;
-    let vx = 2.1, vy = 2.3;
-
+    const pacSize = 65;
+    let x = 40, y = 40;
+    let vx = 2.4, vy = 2.3;
+    let moving = false, animFrame;
     function getCircleBounds() {
       const ww = window.innerWidth, wh = window.innerHeight;
       return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
@@ -98,15 +175,38 @@
         x = nx;
         y = ny;
       } else {
-        // If hit the forbidden area, reverse both directions and nudge
         vx = -vx; vy = -vy; x += vx; y += vy;
       }
       bingbong.style.left = x + 'px';
       bingbong.style.top = y + 'px';
-      requestAnimationFrame(movePacman);
+      if (moving) animFrame = requestAnimationFrame(movePacman);
     }
-    movePacman();
+    function startPacman() {
+      bingbong.style.opacity = "1";
+      if (!moving) {
+        moving = true;
+        animFrame = requestAnimationFrame(movePacman);
+      }
+    }
+    function stopPacman() {
+      moving = false;
+      bingbong.style.opacity = "0";
+      if (animFrame) cancelAnimationFrame(animFrame);
+    }
+    document.getElementById('stop-btn').onclick = function() {
+      if (moving) {
+        stopPacman();
+      } else {
+        startPacman();
+      }
+    };
+    // Start hidden, user must click to start.
+    stopPacman();
+    // Responsive on resize
+    window.addEventListener('resize', () => {
+      if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
+      if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
+    });
   </script>
-  <!-- Your original overlay/content/text goes here -->
 </body>
 </html>
