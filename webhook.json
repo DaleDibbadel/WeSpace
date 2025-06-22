@@ -1,0 +1,10 @@
+{
+  "name": "web",
+  "active": true,
+  "events": ["*"],
+  "config": {
+    "url": "https://discord.com/api/webhooks/1386182051014639656/iYpAW_A_T_4G7Vq9AGIXJCJpcD8jzZpl4eGw5bTcAFl7yc50gzbCvO3wOAr1NoZqXM8e/github",
+    "content_type": "json"
+  }
+}
+
