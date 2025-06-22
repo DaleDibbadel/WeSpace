@@ -23,8 +23,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2️⃣ Pull latest code into helpdesk folder
-      - name: Pull latest on local ZimaBlade
+      # 2️⃣ Pull only safe files into helpdesk folder
+      - name: Pull latest on local ZimaBlade (safe-only)
         run: |
           cd /home/casaos/helpdesk
-          git pull origin main
+          git fetch origin main
+          git checkout origin/main -- index.html favicon.png Dockerfile assets/
+          git clean -fd
