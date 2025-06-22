@@ -29,8 +29,8 @@
     }
     #bingbong-wrap {
       position: absolute;
-      width: 120px;
-      height: 120px;
+      width: 80px;
+      height: 80px;
       z-index: 10;
       user-select: none;
       pointer-events: none;
@@ -38,6 +38,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      background: none;
     }
     .pacman {
       width: 100%;
@@ -49,50 +50,35 @@
       clip-path: polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
       position: relative;
       display: flex;
-      flex-direction: column;
       align-items: center;
-      justify-content: flex-end;
+      justify-content: center;
       overflow: hidden;
     }
     .pacman-eye {
       position: absolute;
-      left: 68px; top: 27px;
-      width: 14px; height: 14px;
+      left: 42px; top: 18px;
+      width: 9px; height: 9px;
       background: #222;
       border-radius: 50%;
       z-index: 2;
     }
-    .bingbong-text {
-      width: 90%;
-      text-align: center;
-      color: #ff33cc;
-      font-family: 'Arial Black', Arial, sans-serif;
-      font-weight: bold;
-      font-size: clamp(11px, 19px, 4vw);
-      margin-bottom: 8px;
-      margin-top: auto;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      text-shadow: 0 2px 5px #222, 0 1px 1px #000;
-      letter-spacing: 1px;
-      line-height: 1.0;
-    }
   </style>
 </head>
 <body>
+  <!-- Your normal text and content up here if needed -->
   <div id="bingbong-wrap">
     <div class="pacman">
       <div class="pacman-eye"></div>
-      <span class="bingbong-text">BingBong</span>
+      <!-- No text inside Pacman! -->
     </div>
   </div>
   <script>
-    // Movement, avoid yinyang
+    // Pacman (BingBong) movement logic, avoiding the spinning Yin-Yang
     const bingbong = document.getElementById('bingbong-wrap');
-    const pacSize = 120;
+    const pacSize = 80; // Pacman diameter
     let x = 30, y = 30;
     let vx = 2.1, vy = 2.3;
+
     function getCircleBounds() {
       const ww = window.innerWidth, wh = window.innerHeight;
       return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
@@ -112,6 +98,7 @@
         x = nx;
         y = ny;
       } else {
+        // If hit the forbidden area, reverse both directions and nudge
         vx = -vx; vy = -vy; x += vx; y += vy;
       }
       bingbong.style.left = x + 'px';
@@ -120,5 +107,6 @@
     }
     movePacman();
   </script>
+  <!-- Your original overlay/content/text goes here -->
 </body>
 </html>
