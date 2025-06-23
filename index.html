@@ -108,6 +108,54 @@
       color:#ffa500;
     }
 
+    /* Bingbong Pacman */
+    #bingbong-wrap {
+      position:absolute;
+      width:65px; height:65px;
+      z-index:4;
+      user-select:none;
+      pointer-events:none;
+      filter:drop-shadow(0 0 8px #000b);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      opacity:0;
+      transition:opacity 0.2s;
+    }
+    .pacman {
+      width:100%; height:100%;
+      border-radius:50%;
+      background:
+        radial-gradient(7% 7% at 65% 30%,#000 90%,#0000),
+        radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
+      clip-path:polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
+      position:relative;
+    }
+    .pacman-eye {
+      position:absolute;
+      left:38px; top:17px;
+      width:7px; height:7px;
+      background:#222;
+      border-radius:50%;
+      z-index:2;
+    }
+
+    /* Smoke trail */
+    #smoke-container {
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:2;
+    }
+    .smoke {
+      position:absolute;
+      width:512px; height:512px;
+      margin-left:-256px; margin-top:-256px;
+      background:radial-gradient(circle, rgba(240,240,240,0.4) 0%, rgba(128,128,128,0.1) 60%, rgba(128,128,128,0) 100%);
+      filter:blur(20px);
+      opacity:0.4;
+    }
+
     @keyframes pulse {
       0%,100% { opacity:1; }
       50%     { opacity:0.6; }
@@ -132,6 +180,16 @@
 
   <!-- Drifting text -->
   <div id="animBox">bingbing</div>
+
+  <!-- Smoke trail container -->
+  <div id="smoke-container"></div>
+
+  <!-- Bingbong Pacman -->
+  <div id="bingbong-wrap">
+    <div class="pacman">
+      <div class="pacman-eye"></div>
+    </div>
+  </div>
 
   <!-- Gold K -->
 
@@ -160,9 +218,64 @@
   <a class="logo-link" href="https://homeguardofbill-huoc.com" target="_blank">HOMEGUARDOFBILL-HUOC.COM</a>
 
   <script>
+    const bingbong = document.getElementById('bingbong-wrap');
+    const smokeContainer = document.getElementById('smoke-container');
+    const pacSize = 65;
+    let x = 40, y = 40;
+    let vx = 2.4, vy = 2.3;
+    let moving = false, frame;
+
+    function getCircleBounds() {
+      const ww = window.innerWidth, wh = window.innerHeight;
+      return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
+    }
+    function intersectsCircle(px, py, size) {
+      const c = getCircleBounds();
+      const cx = px + size/2;
+      const cy = py + size/2;
+      const dist = Math.hypot(cx - c.x, cy - c.y);
+      return dist + size/2 > c.r;
+    }
+    function spawnSmoke() {
+      if (intersectsCircle(x, y, pacSize)) return;
+      const s = document.createElement('div');
+      s.className = 'smoke';
+      s.style.left = (x + pacSize/2) + 'px';
+      s.style.top = (y + pacSize/2) + 'px';
+      smokeContainer.appendChild(s);
+    }
+    function movePacman() {
+      let nx = x + vx, ny = y + vy;
+      if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
+      if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
+      if (!intersectsCircle(nx, ny, pacSize)) {
+        x = nx; y = ny;
+      } else {
+        vx = -vx; vy = -vy; x += vx; y += vy;
+      }
+      bingbong.style.left = x + 'px';
+      bingbong.style.top = y + 'px';
+      spawnSmoke();
+      if (moving) frame = requestAnimationFrame(movePacman);
+    }
+    function startBingbong() {
+      bingbong.style.opacity = '1';
+      if (!moving) { moving = true; frame = requestAnimationFrame(movePacman); }
+    }
+    function stopBingbong() {
+      moving = false;
+      bingbong.style.opacity = '0';
+      if (frame) cancelAnimationFrame(frame);
+    }
     document.getElementById('toggle').onclick = () => {
       document.getElementById('animBox').classList.toggle('paused');
+      if (moving) stopBingbong(); else startBingbong();
     };
+    startBingbong();
+    window.addEventListener('resize', () => {
+      if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
+      if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
+    });
   </script>
 </body>
 </html>
