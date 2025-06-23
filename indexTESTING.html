@@ -34,7 +34,7 @@
       left: 22px;
       font-size: 38px;
       font-family: Arial, serif;
-      z-index: 12;
+      z-index: 20; /* ensure button always visible */
       cursor: pointer;
       color: #faf5d7;
       user-select: none;
@@ -127,6 +127,20 @@
       border-radius: 50%;
       z-index: 2;
     }
+    /* Smoke overlay */
+    #smoke {
+      position: fixed;
+      left: 0; right: 0; bottom: 0;
+      height: 0;
+      background: radial-gradient(circle at center, #6668, #000);
+      z-index: 15;
+      pointer-events: none;
+      animation: smokeFill 30s forwards;
+    }
+    @keyframes smokeFill {
+      from { height: 0; opacity: 0.1; }
+      to   { height: 100%; opacity: 0.85; }
+    }
   </style>
 </head>
 <body>
@@ -149,12 +163,13 @@
       <div class="pacman-eye"></div>
     </div>
   </div>
+  <div id="smoke"></div>
   <script>
     // === BingBong/Pacman Movement Logic ===
     const bingbong = document.getElementById('bingbong-wrap');
     const pacSize = 65;
     let x = 40, y = 40;
-    let vx = 2.4, vy = 2.3;
+    let vx = 0.6, vy = 0.5; // slower crawl movement
     let moving = false, animFrame;
     function getCircleBounds() {
       const ww = window.innerWidth, wh = window.innerHeight;
@@ -165,7 +180,7 @@
       const cx = px + size/2;
       const cy = py + size/2;
       const dist = Math.sqrt((cx-c.x)**2 + (cy-c.y)**2);
-      return dist + size/2 > c.r;
+      return dist < c.r + size/2; // true when overlapping yin yang circle
     }
     function movePacman() {
       let nx = x + vx, ny = y + vy;
@@ -200,8 +215,15 @@
         startPacman();
       }
     };
-    // Start hidden, user must click to start.
-    stopPacman();
+    // Autostart BingBong on page load.
+    startPacman();
+    // Smoke overlay triggers page reset when full
+    const smoke = document.getElementById('smoke');
+    function resetPage() {
+      try { localStorage.clear(); } catch (e) {}
+      location.reload(true);
+    }
+    smoke.addEventListener('animationend', resetPage);
     // Responsive on resize
     window.addEventListener('resize', () => {
       if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
