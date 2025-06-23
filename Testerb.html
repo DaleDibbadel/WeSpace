@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>BingBong w/ Crisp Yin‑Yang</title>
+  <style>
+    * { margin:0; padding:0; }
+    body, html { width:100%; height:100%; background:black; overflow:hidden; }
+    canvas { position:absolute; top:0; left:0; }
+    #bgCanvas { z-index:0; }
+    #fgCanvas { z-index:1; }
+  </style>
+</head>
+<body>
+    <div id="welcome-group" style="position:absolute;top:20px;left:20px;z-index:10;background:rgba(0,0,0,0.7);color:#fff;padding:16px 24px;border-radius:10px;font-family:sans-serif;box-shadow:0 2px 8px #000;">
+      <h2 style="margin:0 0 8px 0;">Welcome to BingBong!</h2>
+      <button style="margin-right:8px;">Start</button>
+      <button>Pause</button>
+    </div>
+    <canvas id="bgCanvas"></canvas>
+    <canvas id="fgCanvas"></canvas>
+    <script>
+      const bg = document.getElementById('bgCanvas'), bgCtx = bg.getContext('2d');
+      const fg = document.getElementById('fgCanvas'), fgCtx = fg.getContext('2d');
+      let W = bg.width = fg.width = innerWidth;
+      let H = bg.height = fg.height = innerHeight;
+      window.addEventListener('resize', () => {
+        W = bg.width = fg.width = innerWidth;
+        H = bg.height = fg.height = innerHeight;
+        drawYinYang();
+      });
+
+      const yinImg = new Image();
+      yinImg.src = 'fox.jpg';  // load high-res image
+      yinImg.onload = drawYinYang;
+
+      // Reduce yin-yang size for better visibility
+      function drawYinYang() {
+        bgCtx.clearRect(0,0,W,H);
+        const size = Math.min(W, H) * 0.4; // 40% of screen
+        bgCtx.save();
+        bgCtx.translate(W/2, H/2);
+        bgCtx.rotate(15 * Math.PI/180);
+        bgCtx.drawImage(yinImg, -size/2, -size/2, size, size);
+        bgCtx.restore();
+      }
+
+      class Particle {
+        constructor(x,y){
+          this.x = x; this.y = y;
+          const ang = Math.random()*Math.PI - Math.PI/2;
+          const sp = Math.random()*1 + 0.5;
+          this.vx = sp * Math.cos(ang);
+          this.vy = sp * Math.sin(ang);
+          this.size = Math.random()*3 + 2;
+          this.alpha = 0.7;
+          // Dynamic smoke color: hue based on angle
+          const hue = 200 + Math.floor(Math.random()*60) + Math.floor((pac.angle/Math.PI)*60);
+          this.color = `hsla(${hue},80%,85%,`;
+        }
+        update(){
+          this.x += this.vx; this.y += this.vy;
+          this.alpha *= 0.98; // slower fade
+          this.size *= 0.98;
+        }
+        draw(){
+          fgCtx.save();
+          fgCtx.globalAlpha = this.alpha;
+          fgCtx.fillStyle = this.color + this.alpha + ')';
+          fgCtx.shadowColor = '#fff';
+          fgCtx.shadowBlur = 3;
+          fgCtx.beginPath();
+          fgCtx.arc(this.x, this.y, this.size,0,2*Math.PI);
+          fgCtx.fill();
+          fgCtx.restore();
+        }
+      }
+
+      const particles = [];
+      const pac = { x:W*0.15, y:H*0.15, vx:2, vy:1.5, speed:2.2, angle:0 };
+
+      const center = { x: W/2, y:H/2 };
+      const minDist = (Math.min(W,H)*0.4)/2 + 40; // match new yin-yang size
+
+      // Helper: is Pacman inside the yin-yang area?
+      function isInsideYinYang(x, y) {
+        const dx = x - W/2;
+        const dy = y - H/2;
+        const radius = (Math.min(W, H) * 0.4) / 2; // match yin-yang size
+        return Math.hypot(dx, dy) < radius + 10; // 10px buffer
+      }
+
+      // Movement: random edge, gentle wall bounce, avoid center
+      function wander(){
+        const bias = 0.2;
+        const d = Math.hypot(pac.x - center.x, pac.y - center.y);
+        if (d < minDist) {
+          // steer outward
+          const dx = pac.x - center.x, dy = pac.y - center.y;
+          pac.vx += dx/d * bias * 2; // stronger repulsion
+          pac.vy += dy/d * bias * 2;
+        } else {
+          // random edge wander
+          pac.vx += (Math.random()-0.5)*0.2;
+          pac.vy += (Math.random()-0.5)*0.2;
+        }
+        // gentle wall bounce
+        if (pac.x < 30 && pac.vx < 0) pac.vx *= -0.8;
+        if (pac.x > W-30 && pac.vx > 0) pac.vx *= -0.8;
+        if (pac.y < 30 && pac.vy < 0) pac.vy *= -0.8;
+        if (pac.y > H-30 && pac.vy > 0) pac.vy *= -0.8;
+        const mag = Math.hypot(pac.vx,pac.vy);
+        pac.vx = pac.vx/mag * pac.speed;
+        pac.vy = pac.vy/mag * pac.speed;
+        pac.angle = Math.atan2(pac.vy, pac.vx);
+        // If inside yin-yang, force out
+        if (isInsideYinYang(pac.x, pac.y)) {
+          const dx = pac.x - center.x, dy = pac.y - center.y;
+          const dist = Math.hypot(dx, dy) || 1;
+          pac.x = center.x + dx/dist * (minDist + 12);
+          pac.y = center.y + dy/dist * (minDist + 12);
+        }
+      }
+
+      // Only spawn smoke if outside yin-yang
+      function spawnSmoke(){
+        if (!isInsideYinYang(pac.x, pac.y)) {
+          particles.push(new Particle(pac.x, pac.y));
+          if (particles.length > 600) particles.splice(0, 10); // 600 cap
+        }
+      }
+
+      function animate(){
+        fgCtx.clearRect(0,0,W,H);
+        wander();
+        pac.x = (pac.x + pac.vx + W) % W;
+        pac.y = (pac.y + pac.vy + H) % H;
+        spawnSmoke();
+        fgCtx.globalCompositeOperation = 'lighter';
+        for (let i=particles.length-1; i>=0; i--){
+          const p = particles[i];
+          p.update();
+          if (p.alpha < 0.05) particles.splice(i,1);
+          else p.draw();
+        }
+        fgCtx.globalCompositeOperation = 'source-over';
+        fgCtx.save();
+        fgCtx.translate(pac.x, pac.y);
+        fgCtx.rotate(pac.angle);
+        // Shadow layering
+        fgCtx.save();
+        fgCtx.shadowColor = 'rgba(0,0,0,0.5)';
+        fgCtx.shadowBlur = 16;
+        fgCtx.globalAlpha = 0.5;
+        fgCtx.beginPath();
+        fgCtx.arc(0, 8, 22, 0, 2*Math.PI);
+        fgCtx.fillStyle = '#222';
+        fgCtx.fill();
+        fgCtx.restore();
+        // Angle-dependent mouth shape
+        const mouthOpen = 0.18 + Math.abs(Math.sin(Date.now()/80 + pac.angle*2))*0.13;
+        fgCtx.fillStyle = '#FFDD00';
+        fgCtx.beginPath();
+        fgCtx.moveTo(0,0);
+        fgCtx.arc(0,0,20, mouthOpen*Math.PI, (2-mouthOpen)*Math.PI);
+        fgCtx.fill();
+        fgCtx.restore();
+        requestAnimationFrame(animate);
+      }
+
+      animate();
+
+      // PROFILING TIP:
+      // In DevTools → Performance
+      // - Check ~60 FPS
+      // - Confirm memory use flat after ~30s.
+    </script>
+
+</body>
+</html>

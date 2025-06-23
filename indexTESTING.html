@@ -2,211 +2,214 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>MollywhoppinRBG - Test</title>
-  <link rel="icon" href="favicon.png" type="image/png">
+  <title>YinYang + Pac‑Man</title>
   <style>
+    /* BLACK BACKGROUND */
     html, body {
       margin:0; padding:0;
-      width:100vw; height:100vh;
-      overflow:hidden; background:black;
-      font-family:Arial,sans-serif;
-      color:#0E173D;
+      width:100%; height:100%;
+      background:black;
+      overflow:hidden;
       position:relative;
     }
-    body::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: url("fox.jpg") no-repeat center center;
-      background-size: contain;
-      background-color: black;
-      z-index: 0;
-      animation: spin 60s linear infinite;
-      pointer-events: none;
+
+    /* TWO CANVASES */
+    canvas {
+      position:absolute;
+      top:0; left:0;
+      pointer-events:none;
     }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+
+    /* UI BUTTONS */
+    #ui {
+      position:absolute;
+      top:20px;
+      left:20px;
+      z-index:10;
     }
-    #stop-btn {
-      position: absolute;
-      top: 22px;
-      left: 22px;
-      font-size: 38px;
-      font-family: Arial, serif;
-      z-index: 12;
-      cursor: pointer;
-      color: #faf5d7;
-      user-select: none;
-      background: none;
-      border: none;
-      filter: drop-shadow(0 1px 2px #0009);
-      transition: transform 0.1s;
+    .btn {
+      margin:0 4px 0 0;
+      padding:2px 6px;
+      font-size:9px;
+      font-family:sans-serif;
+      background:black;
+      border:none;
+      color:black;
+      cursor:pointer;
+      box-shadow:none;
+      transition:background .2s, color .2s, box-shadow .2s;
     }
-    #stop-btn:active { transform: scale(0.96);}
-    .header-content {
-      position: absolute;
-      top: 45px;
-      left: 100px;
-      z-index: 4;
-      max-width: 450px;
-      color: #2e3486;
-      font-size: 17px;
-      user-select: text;
-    }
-    .header-content a { color: #2196F3; text-decoration:none;}
-    .header-content a:hover { text-decoration: underline; }
-    .header-content .subtitle {
-      color: #6dd5fc;
-      font-size: 15px;
-      margin-bottom: 8px;
-      display: block;
-    }
-    .header-content .assist {
-      color: #7ef07e;
-      font-size: 15px;
-      margin-bottom: 10px;
-      display: block;
-    }
-    .header-content .hint {
-      color: #888;
-      font-size: 12px;
-      margin-bottom: 18px;
-      display: block;
-    }
-    .reveal-container {
-      display: flex; gap: 12px; margin-bottom: 6px;
-    }
-    .reveal-container .box {
-      padding: 8px 18px;
-      font-size: 15px;
-      border: none;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
-      opacity: 0.95;
-      transition: background 0.25s;
-      cursor: pointer;
-      user-select: none;
-      font-family: inherit;
-    }
-    .reveal-container .box:hover {
-      background: #364aad;
-      color: #fff;
-    }
-    /* Pacman (BingBong) */
-    #bingbong-wrap {
-      position: absolute;
-      width: 65px;
-      height: 65px;
-      z-index: 10;
-      user-select: none;
-      pointer-events: none;
-      filter: drop-shadow(0 0 8px #000b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-    }
-    .pacman {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background:
-        radial-gradient(7% 7% at 65% 30%,#000 90%,#0000),
-        radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
-      clip-path: polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .pacman-eye {
-      position: absolute;
-      left: 38px; top: 17px;
-      width: 7px; height: 7px;
-      background: #222;
-      border-radius: 50%;
-      z-index: 2;
+    .btn:hover {
+      background:gold;
+      color:black;
+      box-shadow:0 12px 16px rgba(0,0,0,0.24),0 17px 50px rgba(0,0,0,0.19);
     }
   </style>
 </head>
 <body>
-  <!-- STOP BUTTON -->
-  <button id="stop-btn">(͡ ° ͜ʖ ͡ °)</button>
-  <!-- HEADER TEXT AND BUTTONS -->
-  <div class="header-content">
-    <span class="subtitle">Welcome to <a href="https://homeguardofbill-huoc.com" target="_blank">homeguardofbill-huoc.com</a>,<br>we are here to help.</span>
-    <span class="assist">Alex will assist you.</span>
-    <span class="hint">Hover each box to reveal and launch:</span>
-    <div class="reveal-container">
-      <button class="box">Option 1</button>
-      <button class="box">Option 2</button>
-      <button class="box">ToBook</button>
-    </div>
-  </div>
-  <!-- PACMAN (BINGBONG) -->
-  <div id="bingbong-wrap" style="opacity:0;">
-    <div class="pacman">
-      <div class="pacman-eye"></div>
-    </div>
-  </div>
-  <script>
-    // === BingBong/Pacman Movement Logic ===
-    const bingbong = document.getElementById('bingbong-wrap');
-    const pacSize = 65;
-    let x = 40, y = 40;
-    let vx = 2.4, vy = 2.3;
-    let moving = false, animFrame;
-    function getCircleBounds() {
-      const ww = window.innerWidth, wh = window.innerHeight;
-      return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
+
+<div id="ui">
+  <button class="btn">Option 1</button>
+  <button class="btn">Option 2</button>
+  <button class="btn">PushToBook</button>
+  <button class="btn" id="toggle">⏯️</button>
+</div>
+
+<canvas id="bg"></canvas>
+<canvas id="fg"></canvas>
+
+<script>
+  const bg = document.getElementById('bg'), bgCtx = bg.getContext('2d');
+  const fg = document.getElementById('fg'), fgCtx = fg.getContext('2d');
+
+  let W = bg.width = fg.width = window.innerWidth;
+  let H = bg.height = fg.height = window.innerHeight;
+
+  window.addEventListener('resize', () => {
+    W = bg.width = fg.width = window.innerWidth;
+    H = bg.height = fg.height = window.innerHeight;
+  });
+
+  const yin = new Image();
+  yin.src = 'fox.jpg';
+
+  let rot = 0;
+
+  function drawYin() {
+    const size = Math.min(W,H) * 0.5;
+    bgCtx.clearRect(0,0,W,H);
+    bgCtx.save();
+    bgCtx.translate(W/2,H/2);
+    bgCtx.rotate(rot);
+    bgCtx.drawImage(yin, -size/2, -size/2, size, size);
+    bgCtx.restore();
+  }
+
+  const pac = {
+    x:100, y:100, vx:2, vy:1.5, speed:2.4, angle:0
+  };
+  const particles = [];
+  const MAX = 600;
+  let paused=false;
+
+  document.getElementById('toggle').addEventListener('click', () => {
+    paused = !paused;
+  });
+
+  function insideCircle(x,y) {
+    const dx = x - W/2, dy = y - H/2;
+    const r = Math.min(W,H)*0.5/2;
+    return dx*dx + dy*dy < (r+5)*(r+5);
+  }
+
+  function wander() {
+    if(insideCircle(pac.x,pac.y)) {
+      const dx = pac.x - W/2, dy = pac.y - H/2;
+      const d = Math.hypot(dx,dy)||1;
+      pac.vx += (dx/d)*0.4;
+      pac.vy += (dy/d)*0.4;
+    } else {
+      pac.vx += (Math.random()-0.5)*0.2;
+      pac.vy += (Math.random()-0.5)*0.2;
     }
-    function intersectsCircle(px, py, size) {
-      const c = getCircleBounds();
-      const cx = px + size/2;
-      const cy = py + size/2;
-      const dist = Math.sqrt((cx-c.x)**2 + (cy-c.y)**2);
-      return dist + size/2 > c.r;
+    if(pac.x<30 && pac.vx<0) pac.vx*=-0.8;
+    if(pac.x>W-30 && pac.vx>0) pac.vx*=-0.8;
+    if(pac.y<30 && pac.vy<0) pac.vy*=-0.8;
+    if(pac.y>H-30 && pac.vy>0) pac.vy*=-0.8;
+
+    const mag = Math.hypot(pac.vx,pac.vy)||1;
+    pac.vx = pac.vx/mag * pac.speed;
+    pac.vy = pac.vy/mag * pac.speed;
+    pac.angle = Math.atan2(pac.vy,pac.vx);
+
+    if(insideCircle(pac.x,pac.y)) {
+      const dx = pac.x - W/2, dy = pac.y - H/2;
+      const d = Math.hypot(dx,dy)||1;
+      const r = Math.min(W,H)*0.5/2;
+      pac.x = W/2 + dx/d*(r+5);
+      pac.y = H/2 + dy/d*(r+5);
     }
-    function movePacman() {
-      let nx = x + vx, ny = y + vy;
-      if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
-      if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
-      if (!intersectsCircle(nx, ny, pacSize)) {
-        x = nx;
-        y = ny;
-      } else {
-        vx = -vx; vy = -vy; x += vx; y += vy;
+  }
+
+  class P {
+    constructor(x,y){
+      this.x=x;this.y=y;
+      const a=Math.random()*2*Math.PI;
+      this.vx=Math.cos(a)*(Math.random()+0.5);
+      this.vy=Math.sin(a)*(Math.random()+0.5);
+      this.size=Math.random()*3+2;
+      this.alpha=0.7;
+      const hue=200+Math.random()*60+Math.abs((pac.angle/Math.PI)*60);
+      this.color=`hsla(${hue},80%,85%,`;
+    }
+    update(){
+      this.x+=this.vx; this.y+=this.vy;
+      this.alpha*=0.98; this.size*=0.98;
+    }
+    draw(){
+      fgCtx.save();
+      fgCtx.globalAlpha=this.alpha;
+      fgCtx.fillStyle=this.color+this.alpha+')';
+      fgCtx.shadowColor='#fff';
+      fgCtx.shadowBlur=3;
+      fgCtx.beginPath();
+      fgCtx.arc(this.x,this.y,this.size,0,2*Math.PI);
+      fgCtx.fill();
+      fgCtx.restore();
+    }
+  }
+
+  function animate() {
+    rot -= 0.005;
+    drawYin();
+
+    if(!paused) {
+      wander();
+      pac.x=(pac.x+W)%W;
+      pac.y=(pac.y+H)%H;
+
+      if(!insideCircle(pac.x,pac.y)) {
+        particles.push(new P(pac.x,pac.y));
+        if(particles.length>MAX) particles.splice(0,10);
       }
-      bingbong.style.left = x + 'px';
-      bingbong.style.top = y + 'px';
-      if (moving) animFrame = requestAnimationFrame(movePacman);
-    }
-    function startPacman() {
-      bingbong.style.opacity = "1";
-      if (!moving) {
-        moving = true;
-        animFrame = requestAnimationFrame(movePacman);
+
+      fgCtx.clearRect(0,0,W,H);
+      fgCtx.globalCompositeOperation='lighter';
+      for(let i=particles.length-1;i>=0;i--){
+        particles[i].update();
+        if(particles[i].alpha<0.05) particles.splice(i,1);
+        else particles[i].draw();
       }
+      fgCtx.globalCompositeOperation='source-over';
+
+      fgCtx.save();
+      fgCtx.translate(pac.x,pac.y);
+      fgCtx.rotate(pac.angle);
+
+      // shadow
+      fgCtx.save();
+      fgCtx.shadowColor='rgba(0,0,0,0.5)';
+      fgCtx.shadowBlur=10;
+      fgCtx.globalAlpha=0.5;
+      fgCtx.beginPath();
+      fgCtx.arc(0,8,22,0,2*Math.PI);
+      fgCtx.fillStyle='#222';
+      fgCtx.fill();
+      fgCtx.restore();
+
+      const mo = 0.18 + Math.abs(Math.sin(Date.now()/80 + pac.angle*2))*0.13;
+      fgCtx.fillStyle='#FFDD00';
+      fgCtx.beginPath();
+      fgCtx.moveTo(0,0);
+      fgCtx.arc(0,0,20, mo*Math.PI, (2-mo)*Math.PI);
+      fgCtx.fill();
+      fgCtx.restore();
     }
-    function stopPacman() {
-      moving = false;
-      bingbong.style.opacity = "0";
-      if (animFrame) cancelAnimationFrame(animFrame);
-    }
-    document.getElementById('stop-btn').onclick = function() {
-      if (moving) {
-        stopPacman();
-      } else {
-        startPacman();
-      }
-    };
-    // Start hidden, user must click to start.
-    stopPacman();
-    // Responsive on resize
-    window.addEventListener('resize', () => {
-      if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
-      if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
-    });
-  </script>
+
+    requestAnimationFrame(animate);
+  }
+
+  yin.onload = animate;
+</script>
 </body>
 </html>
