@@ -5,134 +5,72 @@
   <title>MollywhoppinRBG - Test</title>
   <link rel="icon" href="favicon.png" type="image/png">
   <style>
-    html, body {
-      margin:0; padding:0;
-      width:100vw; height:100vh;
-      overflow:hidden; background:black;
+    html,body{
+      margin:0;padding:0;
+      width:100vw;height:100vh;
+      overflow:hidden;background:black;
       font-family:Arial,sans-serif;
       color:#0E173D;
       position:relative;
     }
-    body::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      background: url("fox.jpg") no-repeat center center;
-      background-size: contain;
-      background-color: black;
-      z-index: 0;
-      animation: spin 60s linear infinite;
-      pointer-events: none;
+    body::before{
+      content:"";
+      position:absolute;inset:0;
+      background:url("fox.jpg") no-repeat center center;
+      background-size:contain;background-color:black;
+      z-index:0;animation:spin 60s linear infinite;
+      pointer-events:none;
     }
-    @keyframes spin {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
+    @keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+    #stop-btn{
+      position:absolute;top:22px;left:22px;font-size:38px;
+      font-family:Arial,serif;z-index:12;cursor:pointer;color:#faf5d7;
+      user-select:none;background:none;border:none;
+      filter:drop-shadow(0 1px 2px #0009);transition:transform 0.1s;
     }
-    #stop-btn {
-      position: absolute;
-      top: 22px;
-      left: 22px;
-      font-size: 38px;
-      font-family: Arial, serif;
-      z-index: 12;
-      cursor: pointer;
-      color: #faf5d7;
-      user-select: none;
-      background: none;
-      border: none;
-      filter: drop-shadow(0 1px 2px #0009);
-      transition: transform 0.1s;
+    #stop-btn:active{transform:scale(0.96);}
+    .header-content{
+      position:absolute;top:45px;left:100px;z-index:4;max-width:450px;
+      color:#2e3486;font-size:17px;user-select:text;
     }
-    #stop-btn:active { transform: scale(0.96);}
-    .header-content {
-      position: absolute;
-      top: 45px;
-      left: 100px;
-      z-index: 4;
-      max-width: 450px;
-      color: #2e3486;
-      font-size: 17px;
-      user-select: text;
+    .header-content a{color:#2196F3;text-decoration:none;}
+    .header-content a:hover{text-decoration:underline;}
+    .header-content .subtitle{color:#6dd5fc;font-size:15px;margin-bottom:8px;display:block;}
+    .header-content .assist{color:#7ef07e;font-size:15px;margin-bottom:10px;display:block;}
+    .header-content .hint{color:#888;font-size:12px;margin-bottom:18px;display:block;}
+    .reveal-container{display:flex;gap:12px;margin-bottom:6px;}
+    .reveal-container .box{
+      padding:8px 18px;font-size:15px;border:none;border-radius:6px;background:#222;
+      color:#fff;opacity:0.95;transition:background 0.25s;cursor:pointer;
+      user-select:none;font-family:inherit;
     }
-    .header-content a { color: #2196F3; text-decoration:none;}
-    .header-content a:hover { text-decoration: underline; }
-    .header-content .subtitle {
-      color: #6dd5fc;
-      font-size: 15px;
-      margin-bottom: 8px;
-      display: block;
+    .reveal-container .box:hover{background:#364aad;color:#fff;}
+    /* Pacman and smoke */
+    #bingbong-wrap{
+      position:absolute;width:65px;height:65px;z-index:10;user-select:none;
+      pointer-events:none;filter:drop-shadow(0 0 8px #000b);transition:opacity 0.2s;
     }
-    .header-content .assist {
-      color: #7ef07e;
-      font-size: 15px;
-      margin-bottom: 10px;
-      display: block;
+    .pacman{
+      width:100%;height:100%;border-radius:50%;
+      background:radial-gradient(7% 7% at 65% 30%,#000 90%,#0000),
+                 radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
+      clip-path:polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
+      position:relative;overflow:hidden;
     }
-    .header-content .hint {
-      color: #888;
-      font-size: 12px;
-      margin-bottom: 18px;
-      display: block;
+    .pacman-eye{position:absolute;left:38px;top:17px;width:7px;height:7px;background:#222;border-radius:50%;z-index:2;}
+    #smoke-container{position:absolute;inset:0;pointer-events:none;z-index:5;}
+    .smoke{
+      position:absolute;width:20px;height:20px;border-radius:50%;
+      background:radial-gradient(circle,rgba(200,200,200,0.5) 0%,rgba(200,200,200,0) 70%);
+      animation:smokeFade 6s linear forwards;
     }
-    .reveal-container {
-      display: flex; gap: 12px; margin-bottom: 6px;
-    }
-    .reveal-container .box {
-      padding: 8px 18px;
-      font-size: 15px;
-      border: none;
-      border-radius: 6px;
-      background: #222;
-      color: #fff;
-      opacity: 0.95;
-      transition: background 0.25s;
-      cursor: pointer;
-      user-select: none;
-      font-family: inherit;
-    }
-    .reveal-container .box:hover {
-      background: #364aad;
-      color: #fff;
-    }
-    /* Pacman (BingBong) */
-    #bingbong-wrap {
-      position: absolute;
-      width: 65px;
-      height: 65px;
-      z-index: 10;
-      user-select: none;
-      pointer-events: none;
-      filter: drop-shadow(0 0 8px #000b);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: opacity 0.2s;
-    }
-    .pacman {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background:
-        radial-gradient(7% 7% at 65% 30%,#000 90%,#0000),
-        radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
-      clip-path: polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
-      position: relative;
-      overflow: hidden;
-    }
-    .pacman-eye {
-      position: absolute;
-      left: 38px; top: 17px;
-      width: 7px; height: 7px;
-      background: #222;
-      border-radius: 50%;
-      z-index: 2;
-    }
+    @keyframes smokeFade{from{transform:scale(1);opacity:0.6;}to{transform:scale(4);opacity:0;}}
+    body.blinking{animation:pageBlink 1.2s steps(2,start) 6;}
+    @keyframes pageBlink{0%,100%{background-color:black;}50%{background-color:red;}}
   </style>
 </head>
 <body>
-  <!-- STOP BUTTON -->
   <button id="stop-btn">(͡ ° ͜ʖ ͡ °)</button>
-  <!-- HEADER TEXT AND BUTTONS -->
   <div class="header-content">
     <span class="subtitle">Welcome to <a href="https://homeguardofbill-huoc.com" target="_blank">homeguardofbill-huoc.com</a>,<br>we are here to help.</span>
     <span class="assist">Alex will assist you.</span>
@@ -143,69 +81,52 @@
       <button class="box">ToBook</button>
     </div>
   </div>
-  <!-- PACMAN (BINGBONG) -->
+  <div id="smoke-container"></div>
   <div id="bingbong-wrap" style="opacity:0;">
     <div class="pacman">
       <div class="pacman-eye"></div>
     </div>
   </div>
   <script>
-    // === BingBong/Pacman Movement Logic ===
-    const bingbong = document.getElementById('bingbong-wrap');
-    const pacSize = 65;
-    let x = 40, y = 40;
-    let vx = 2.4, vy = 2.3;
-    let moving = false, animFrame;
-    function getCircleBounds() {
-      const ww = window.innerWidth, wh = window.innerHeight;
-      return { x: ww/2, y: wh/2, r: Math.min(ww, wh)*0.36 };
+    const bingbong=document.getElementById('bingbong-wrap');
+    const smokeContainer=document.getElementById('smoke-container');
+    const pacSize=65;let x=100,y=100,vx=2.4,vy=2.3,moving=false,animFrame,smokeInterval;
+    function emitSmoke(){
+      const s=document.createElement('div');
+      s.className='smoke';
+      s.style.left=(x+pacSize/2-10)+'px';
+      s.style.top=(y+pacSize/2-10)+'px';
+      smokeContainer.appendChild(s);
+      setTimeout(()=>s.remove(),6000);
+      if(smokeContainer.children.length>120)triggerBlink();
     }
-    function intersectsCircle(px, py, size) {
-      const c = getCircleBounds();
-      const cx = px + size/2;
-      const cy = py + size/2;
-      const dist = Math.sqrt((cx-c.x)**2 + (cy-c.y)**2);
-      return dist + size/2 > c.r;
+    function movePacman(){
+      x+=vx;y+=vy;
+      if(x<=0||x>=window.innerWidth-pacSize)vx*=-1;
+      if(y<=0||y>=window.innerHeight-pacSize)vy*=-1;
+      bingbong.style.left=x+'px';
+      bingbong.style.top=y+'px';
+      if(moving)animFrame=requestAnimationFrame(movePacman);
     }
-    function movePacman() {
-      let nx = x + vx, ny = y + vy;
-      if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
-      if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
-      if (!intersectsCircle(nx, ny, pacSize)) {
-        x = nx;
-        y = ny;
-      } else {
-        vx = -vx; vy = -vy; x += vx; y += vy;
-      }
-      bingbong.style.left = x + 'px';
-      bingbong.style.top = y + 'px';
-      if (moving) animFrame = requestAnimationFrame(movePacman);
+    function startPacman(){
+      bingbong.style.opacity='1';
+      if(!moving){moving=true;animFrame=requestAnimationFrame(movePacman);smokeInterval=setInterval(emitSmoke,80);}
     }
-    function startPacman() {
-      bingbong.style.opacity = "1";
-      if (!moving) {
-        moving = true;
-        animFrame = requestAnimationFrame(movePacman);
-      }
+    function stopPacman(){
+      moving=false;bingbong.style.opacity='0';
+      if(animFrame)cancelAnimationFrame(animFrame);
+      clearInterval(smokeInterval);
     }
-    function stopPacman() {
-      moving = false;
-      bingbong.style.opacity = "0";
-      if (animFrame) cancelAnimationFrame(animFrame);
+    function triggerBlink(){
+      if(document.body.classList.contains('blinking'))return;
+      document.body.classList.add('blinking');
+      setTimeout(()=>{document.body.classList.remove('blinking');smokeContainer.innerHTML='';},7200);
     }
-    document.getElementById('stop-btn').onclick = function() {
-      if (moving) {
-        stopPacman();
-      } else {
-        startPacman();
-      }
-    };
-    // Start hidden, user must click to start.
+    document.getElementById('stop-btn').onclick=()=>{moving?stopPacman():startPacman();};
     stopPacman();
-    // Responsive on resize
-    window.addEventListener('resize', () => {
-      if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
-      if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
+    window.addEventListener('resize',()=>{
+      if(x>window.innerWidth-pacSize)x=window.innerWidth-pacSize;
+      if(y>window.innerHeight-pacSize)y=window.innerHeight-pacSize;
     });
   </script>
 </body>
