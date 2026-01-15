@@ -108,6 +108,49 @@
       color:#ffa500;
     }
 
+    /* Pacman (BingBong) */
+    #bingbong-wrap {
+      position:absolute;
+      width:65px;
+      height:65px;
+      z-index:10;
+      user-select:none;
+      pointer-events:none;
+      filter:drop-shadow(0 0 8px #000b);
+    }
+    .pacman {
+      width:100%;
+      height:100%;
+      border-radius:50%;
+      background:
+        radial-gradient(7% 7% at 65% 30%,#000 90%,#0000),
+        radial-gradient(circle at 35% 35%,#0000 70%,#0005) #fc0;
+      clip-path:polygon(0 0,100% 0,100% 28%,50% 50%,100% 72%,100% 100%,0 100%);
+      position:relative;
+      overflow:hidden;
+    }
+    .pacman-eye {
+      position:absolute; left:38px; top:17px;
+      width:7px; height:7px; background:#222;
+      border-radius:50%;
+      z-index:2;
+    }
+
+    /* Smoke trail */
+    .smoke {
+      position:absolute;
+      width:20px; height:20px;
+      background:radial-gradient(circle, rgba(255,255,255,0.6), rgba(255,255,255,0));
+      opacity:0.5;
+      pointer-events:none;
+      animation:smokeRise 20s linear forwards;
+      z-index:1;
+    }
+    @keyframes smokeRise {
+      from { transform:translate(0,0) scale(1); opacity:0.5; }
+      to { transform:translate(-40px,-120px) scale(3); opacity:0; }
+    }
+
     @keyframes pulse {
       0%,100% { opacity:1; }
       50%     { opacity:0.6; }
@@ -133,6 +176,11 @@
   <!-- Drifting text -->
   <div id="animBox">bingbing</div>
 
+  <div id="bingbong-wrap">
+    <div class="pacman">
+      <div class="pacman-eye"></div>
+    </div>
+  </div>
   <!-- Gold K -->
 
   <!-- Content + hover boxes -->
@@ -160,9 +208,62 @@
   <a class="logo-link" href="https://homeguardofbill-huoc.com" target="_blank">HOMEGUARDOFBILL-HUOC.COM</a>
 
   <script>
-    document.getElementById('toggle').onclick = () => {
-      document.getElementById('animBox').classList.toggle('paused');
-    };
+    const toggle = document.getElementById('toggle');
+    const animBox = document.getElementById('animBox');
+    toggle.onclick = () => animBox.classList.toggle('paused');
+
+    const pac = document.getElementById('bingbong-wrap');
+    const pacSize = 65;
+    let x = 40, y = 40;
+    let vx = 1.2, vy = 1.1; // slow movement
+    let smokeCount = 0;
+    const maxSmoke = 300;
+
+    function getCircleBounds() {
+      const ww = window.innerWidth, wh = window.innerHeight;
+      return { x: ww/2, y: wh/2, r: Math.min(ww, wh) * 0.36 };
+    }
+    function intersectsCircle(px, py, size) {
+      const c = getCircleBounds();
+      const cx = px + size/2;
+      const cy = py + size/2;
+      const dist = Math.hypot(cx - c.x, cy - c.y);
+      return dist + size/2 > c.r;
+    }
+    function createSmoke() {
+      const s = document.createElement('div');
+      s.className = 'smoke';
+      s.style.left = (x + pacSize/2) + 'px';
+      s.style.top = (y + pacSize/2) + 'px';
+      document.body.appendChild(s);
+      smokeCount++;
+      if (smokeCount >= maxSmoke) resetAll();
+    }
+    function movePacman() {
+      let nx = x + vx, ny = y + vy;
+      if (nx < 0 || nx > window.innerWidth - pacSize) { vx = -vx; nx = x + vx; }
+      if (ny < 0 || ny > window.innerHeight - pacSize) { vy = -vy; ny = y + vy; }
+      if (!intersectsCircle(nx, ny, pacSize)) {
+        x = nx; y = ny;
+      } else {
+        vx = -vx; vy = -vy; x += vx; y += vy;
+      }
+      pac.style.left = x + 'px';
+      pac.style.top = y + 'px';
+      createSmoke();
+      requestAnimationFrame(movePacman);
+    }
+    function resetAll() {
+      document.querySelectorAll('.smoke').forEach(el => el.remove());
+      smokeCount = 0;
+      localStorage.clear();
+      location.reload();
+    }
+    movePacman();
+    window.addEventListener('resize', () => {
+      if (x > window.innerWidth - pacSize) x = window.innerWidth - pacSize;
+      if (y > window.innerHeight - pacSize) y = window.innerHeight - pacSize;
+    });
   </script>
 </body>
 </html>
