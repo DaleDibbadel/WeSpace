@@ -1,215 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>YinYang + Pac‑Man</title>
-  <style>
-    /* BLACK BACKGROUND */
-    html, body {
-      margin:0; padding:0;
-      width:100%; height:100%;
-      background:black;
-      overflow:hidden;
-      position:relative;
-    }
+<meta charset="UTF-8">
+<title>ASHFALL FINAL REAL</title>
 
-    /* TWO CANVASES */
-    canvas {
-      position:absolute;
-      top:0; left:0;
-      pointer-events:none;
-    }
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  background:black;
+  font-family:Arial;
+}
 
-    /* UI BUTTONS */
-    #ui {
-      position:absolute;
-      top:20px;
-      left:20px;
-      z-index:10;
-    }
-    .btn {
-      margin:0 4px 0 0;
-      padding:2px 6px;
-      font-size:9px;
-      font-family:sans-serif;
-      background:black;
-      border:none;
-      color:black;
-      cursor:pointer;
-      box-shadow:none;
-      transition:background .2s, color .2s, box-shadow .2s;
-    }
-    .btn:hover {
-      background:gold;
-      color:black;
-      box-shadow:0 12px 16px rgba(0,0,0,0.24),0 17px 50px rgba(0,0,0,0.19);
-    }
-  </style>
+/* =========================
+   FULLSCREEN BACKGROUND
+========================= */
+#container {
+  position:fixed;
+  width:100%;
+  height:100%;
+  z-index:0;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.buttons{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  display:flex;
+  gap:40px;
+  z-index:10;
+}
+
+.buttons a{
+  position:relative;
+  width:240px;
+  height:60px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#00ff88;
+  letter-spacing:2px;
+  overflow:hidden;
+  font-size:12px;
+  text-align:center;
+}
+
+/* HOVER */
+.buttons a:hover{
+  background:#00ff88;
+  color:black;
+  box-shadow:0 0 30px #00ff88, 0 0 80px #00ff88;
+}
+
+/* BORDER ANIMATION */
+.buttons a span{ position:absolute; }
+
+.buttons a span:nth-child(1){
+  top:0; left:-100%;
+  width:100%; height:2px;
+  background:#00ff88;
+  animation:a1 1s linear infinite;
+}
+.buttons a span:nth-child(2){
+  right:0; top:-100%;
+  width:2px; height:100%;
+  background:#00ff88;
+  animation:a2 1s linear infinite;
+}
+.buttons a span:nth-child(3){
+  bottom:0; right:-100%;
+  width:100%; height:2px;
+  background:#00ff88;
+  animation:a3 1s linear infinite;
+}
+.buttons a span:nth-child(4){
+  left:0; bottom:-100%;
+  width:2px; height:100%;
+  background:#00ff88;
+  animation:a4 1s linear infinite;
+}
+
+@keyframes a1{100%{left:100%}}
+@keyframes a2{100%{top:100%}}
+@keyframes a3{100%{right:100%}}
+@keyframes a4{100%{bottom:100%}}
+
+/* =========================
+   ZAMMAD FORCE LAYER + COLOR
+========================= */
+.zammad-chat {
+  z-index:999999 !important;
+  position:fixed !important;
+}
+
+/* NEW COLOR APPLIED */
+.zammad-chat .zammad-chat-button,
+.zammad-chat .zammad-chat-header {
+  background:#0F0F0F !important;
+  color:#fff !important;
+}
+</style>
 </head>
+
 <body>
 
-<div id="ui">
-  <button class="btn">Option 1</button>
-  <button class="btn">Option 2</button>
-  <button class="btn">PushToBook</button>
-  <button class="btn" id="toggle">⏯️</button>
+<div id="container"></div>
+
+<!-- =========================
+     BUTTONS
+========================= -->
+<div class="buttons">
+
+  <a href="https://startcontrol.com/alex" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    TAKE CONTROL
+  </a>
+
+  <a href="https://startcontrol.com/alex/start" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    DOWNLOAD REMOTE CONTROLS
+  </a>
+
+  <a href="https://outlook.office.com/bookwithme/...ep=mlink" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    BOOK WITH ALEX
+  </a>
+
 </div>
 
-<canvas id="bg"></canvas>
-<canvas id="fg"></canvas>
+<!-- =========================
+     THREE.JS BACKGROUND
+========================= -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
+
+<script id="vertexShader" type="x-shader/x-vertex">
+void main(){
+  gl_Position = vec4(position,1.0);
+}
+</script>
+
+<script id="fragmentShader" type="x-shader/x-fragment">
+uniform vec2 u_resolution;
+uniform float u_time;
+uniform sampler2D u_noise;
+
+float hash(vec2 p){
+  return texture2D(u_noise,(p+0.5)/256.0).x;
+}
+
+float noise(vec2 uv){
+  vec2 i=floor(uv);
+  vec2 f=fract(uv);
+  vec2 u=f*f*(3.0-2.0*f);
+
+  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),
+             mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
+}
+
+float fbm(vec2 uv){
+  float v=0.;
+  float a=.5;
+  for(int i=0;i<6;i++){
+    v+=a*noise(uv);
+    uv*=2.;
+    a*=.5;
+  }
+  return v;
+}
+
+void main(){
+  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
+
+  float n = fbm(uv*4.0 + u_time*0.05);
+
+  vec3 col = mix(
+    vec3(0.1,0.0,0.0),
+    vec3(1.2,0.7,0.2),
+    n
+  );
+
+  float particles = 0.0;
+
+  for(int i=1;i<=15;i++){
+    float depth = float(i);
+    vec2 p = uv * (30.0 * depth);
+    p.y += u_time * (0.4 * depth);
+
+    float d = noise(p);
+    float dot = step(0.985 - depth*0.002, d);
+
+    particles += dot / depth;
+  }
+
+  col -= particles * 2.5;
+  col = pow(col, vec3(1.4));
+  col = clamp(col, 0.0, 1.0);
+
+  gl_FragColor = vec4(col,1.0);
+}
+</script>
 
 <script>
-  const bg = document.getElementById('bg'), bgCtx = bg.getContext('2d');
-  const fg = document.getElementById('fg'), fgCtx = fg.getContext('2d');
+let scene,camera,renderer,uniforms;
 
-  let W = bg.width = fg.width = window.innerWidth;
-  let H = bg.height = fg.height = window.innerHeight;
+function init(){
+  renderer = new THREE.WebGLRenderer({antialias:true});
+  renderer.setSize(window.innerWidth,window.innerHeight);
+  document.getElementById("container").appendChild(renderer.domElement);
 
-  window.addEventListener('resize', () => {
-    W = bg.width = fg.width = window.innerWidth;
-    H = bg.height = fg.height = window.innerHeight;
-  });
+  scene = new THREE.Scene();
+  camera = new THREE.Camera();
 
-  const yin = new Image();
-  yin.src = 'fox.jpg';
-
-  let rot = 0;
-
-  function drawYin() {
-    const size = Math.min(W,H) * 0.5;
-    bgCtx.clearRect(0,0,W,H);
-    bgCtx.save();
-    bgCtx.translate(W/2,H/2);
-    bgCtx.rotate(rot);
-    bgCtx.drawImage(yin, -size/2, -size/2, size, size);
-    bgCtx.restore();
-  }
-
-  const pac = {
-    x:100, y:100, vx:2, vy:1.5, speed:2.4, angle:0
+  uniforms = {
+    u_time:{value:0},
+    u_resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
+    u_noise:{
+      value:new THREE.TextureLoader().load(
+        "https://raw.githubusercontent.com/emmelleppi/noise-texture/master/perlin-noise.png"
+      )
+    }
   };
-  const particles = [];
-  const MAX = 600;
-  let paused=false;
 
-  document.getElementById('toggle').addEventListener('click', () => {
-    paused = !paused;
+  const material = new THREE.ShaderMaterial({
+    uniforms,
+    vertexShader:document.getElementById("vertexShader").textContent,
+    fragmentShader:document.getElementById("fragmentShader").textContent
   });
 
-  function insideCircle(x,y) {
-    const dx = x - W/2, dy = y - H/2;
-    const r = Math.min(W,H)*0.5/2;
-    return dx*dx + dy*dy < (r+5)*(r+5);
-  }
+  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2),material);
+  scene.add(mesh);
+}
 
-  function wander() {
-    if(insideCircle(pac.x,pac.y)) {
-      const dx = pac.x - W/2, dy = pac.y - H/2;
-      const d = Math.hypot(dx,dy)||1;
-      pac.vx += (dx/d)*0.4;
-      pac.vy += (dy/d)*0.4;
-    } else {
-      pac.vx += (Math.random()-0.5)*0.2;
-      pac.vy += (Math.random()-0.5)*0.2;
-    }
-    if(pac.x<30 && pac.vx<0) pac.vx*=-0.8;
-    if(pac.x>W-30 && pac.vx>0) pac.vx*=-0.8;
-    if(pac.y<30 && pac.vy<0) pac.vy*=-0.8;
-    if(pac.y>H-30 && pac.vy>0) pac.vy*=-0.8;
+function animate(){
+  requestAnimationFrame(animate);
+  uniforms.u_time.value += 0.015;
+  renderer.render(scene,camera);
+}
 
-    const mag = Math.hypot(pac.vx,pac.vy)||1;
-    pac.vx = pac.vx/mag * pac.speed;
-    pac.vy = pac.vy/mag * pac.speed;
-    pac.angle = Math.atan2(pac.vy,pac.vx);
-
-    if(insideCircle(pac.x,pac.y)) {
-      const dx = pac.x - W/2, dy = pac.y - H/2;
-      const d = Math.hypot(dx,dy)||1;
-      const r = Math.min(W,H)*0.5/2;
-      pac.x = W/2 + dx/d*(r+5);
-      pac.y = H/2 + dy/d*(r+5);
-    }
-  }
-
-  class P {
-    constructor(x,y){
-      this.x=x;this.y=y;
-      const a=Math.random()*2*Math.PI;
-      this.vx=Math.cos(a)*(Math.random()+0.5);
-      this.vy=Math.sin(a)*(Math.random()+0.5);
-      this.size=Math.random()*3+2;
-      this.alpha=0.7;
-      const hue=200+Math.random()*60+Math.abs((pac.angle/Math.PI)*60);
-      this.color=`hsla(${hue},80%,85%,`;
-    }
-    update(){
-      this.x+=this.vx; this.y+=this.vy;
-      this.alpha*=0.98; this.size*=0.98;
-    }
-    draw(){
-      fgCtx.save();
-      fgCtx.globalAlpha=this.alpha;
-      fgCtx.fillStyle=this.color+this.alpha+')';
-      fgCtx.shadowColor='#fff';
-      fgCtx.shadowBlur=3;
-      fgCtx.beginPath();
-      fgCtx.arc(this.x,this.y,this.size,0,2*Math.PI);
-      fgCtx.fill();
-      fgCtx.restore();
-    }
-  }
-
-  function animate() {
-    rot -= 0.005;
-    drawYin();
-
-    if(!paused) {
-      wander();
-      pac.x=(pac.x+W)%W;
-      pac.y=(pac.y+H)%H;
-
-      if(!insideCircle(pac.x,pac.y)) {
-        particles.push(new P(pac.x,pac.y));
-        if(particles.length>MAX) particles.splice(0,10);
-      }
-
-      fgCtx.clearRect(0,0,W,H);
-      fgCtx.globalCompositeOperation='lighter';
-      for(let i=particles.length-1;i>=0;i--){
-        particles[i].update();
-        if(particles[i].alpha<0.05) particles.splice(i,1);
-        else particles[i].draw();
-      }
-      fgCtx.globalCompositeOperation='source-over';
-
-      fgCtx.save();
-      fgCtx.translate(pac.x,pac.y);
-      fgCtx.rotate(pac.angle);
-
-      // shadow
-      fgCtx.save();
-      fgCtx.shadowColor='rgba(0,0,0,0.5)';
-      fgCtx.shadowBlur=10;
-      fgCtx.globalAlpha=0.5;
-      fgCtx.beginPath();
-      fgCtx.arc(0,8,22,0,2*Math.PI);
-      fgCtx.fillStyle='#222';
-      fgCtx.fill();
-      fgCtx.restore();
-
-      const mo = 0.18 + Math.abs(Math.sin(Date.now()/80 + pac.angle*2))*0.13;
-      fgCtx.fillStyle='#FFDD00';
-      fgCtx.beginPath();
-      fgCtx.moveTo(0,0);
-      fgCtx.arc(0,0,20, mo*Math.PI, (2-mo)*Math.PI);
-      fgCtx.fill();
-      fgCtx.restore();
-    }
-
-    requestAnimationFrame(animate);
-  }
-
-  yin.onload = animate;
+init();
+animate();
 </script>
+
+<!-- =========================
+     ZAMMAD CHAT (FINAL CORRECT)
+========================= -->
+<script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
+
+<script>
+(function() {
+
+  new ZammadChat({
+
+    /* EXACT FROM YOUR DESIGNER */
+    title: 'CheckRoger',
+    background: '#0F0F0F',
+    fontSize: '12px',
+    flat: true,
+    chatId: 1,
+
+    /* DO NOT BREAK IT AGAIN */
+    cssAutoload: true,
+
+    /* AUTO SHOW */
+    show: true,
+
+    /* DEBUG IF NEEDED */
+    debug: true
+
+  });
+
+})();
+</script>
+
 </body>
 </html>
