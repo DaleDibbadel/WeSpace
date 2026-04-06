@@ -1,0 +1,55 @@
+/* Full dark mode foundation */
+body, html {
+  background-color: #000000 !important;
+  color: gold !important;
+}
+
+/* Login panel (white block) */
+#lightbox, .outer, .card, .background, .table-row, .table-cell {
+  background-color: #000000 !important;
+  color: gold !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Text fields */
+input[type="email"],
+input[type="password"],
+input[type="text"] {
+  background-color: #000000 !important;
+  color: gold !important;
+  border: none !important;
+  border-bottom: 1px solid red !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+/* Placeholder text */
+input::placeholder,
+input[type="email"]::placeholder,
+input[type="password"]::placeholder,
+input[type="text"]::placeholder {
+  color: #777 !important;
+}
+
+/* Label, hint, and support text */
+label, .text-13, .text-12, span, strong {
+  color: gold !important;
+}
+
+/* Links */
+a {
+  color: #f39c12 !important;
+}
+
+/* Buttons */
+button {
+  background-color: transparent !important;
+  border: 1px solid gold !important;
+  color: gold !important;
+}
+
+/* Optional: Hide Microsoft footer (Terms, Privacy) */
+footer, .footerNode {
+  display: none !important;
+}
