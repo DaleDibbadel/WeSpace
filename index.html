@@ -2,19 +2,27 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>ASHFALL FINAL REAL</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUOC</title>
+
+<!-- Google font for HUOC -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 
 <style>
+
+/* =========================
+   GLOBAL RESET
+========================= */
 html, body {
   margin:0;
   padding:0;
   overflow:hidden;
   background:black;
-  font-family:Arial;
+  font-family:Arial, sans-serif;
 }
 
 /* =========================
-   FULLSCREEN BACKGROUND
+   BACKGROUND CANVAS
 ========================= */
 #container {
   position:fixed;
@@ -24,257 +32,126 @@ html, body {
 }
 
 /* =========================
-   BUTTONS
+   TITLE BLOCK
+========================= */
+.title {
+  position:absolute;
+  top:30%;
+  width:100%;
+  text-align:center;
+  z-index:2;
+}
+
+/* Subtitle */
+.title h2{
+  letter-spacing:3px;
+  opacity:0.6;
+  font-weight:400;
+  margin-bottom:10px;
+  color:white;
+}
+
+/* =========================
+   🔥 HUOC TEXT MASKING ONLY
+========================= */
+.masked-text{
+  font-size:48px;
+  font-weight:bold;
+  font-family:'Montserrat', sans-serif;
+
+  /* Gradient that moves */
+  background: linear-gradient(90deg, #00ff88, #ffffff, #00ff88);
+  background-size:200%;
+
+  /* Clip gradient into text */
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  /* Smooth shine animation (NOT blinking) */
+  animation: shine 4s linear infinite;
+
+  margin:0;
+}
+
+/* Moves gradient across text */
+@keyframes shine {
+  0% { background-position:0% }
+  100% { background-position:200% }
+}
+
+/* =========================
+   BUTTON STACK (NO ANIMATION)
 ========================= */
 .buttons{
   position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
+  bottom:40px;
+  left:40px;
   display:flex;
-  gap:40px;
-  z-index:10;
+  flex-direction:column;
+  gap:20px;
+  z-index:2;
 }
 
+/* Static clean buttons */
 .buttons a{
-  position:relative;
   width:240px;
   height:60px;
   display:flex;
   align-items:center;
   justify-content:center;
-  text-decoration:none;
+
+  border:2px solid #00ff88;
   color:#00ff88;
+  text-decoration:none;
   letter-spacing:2px;
-  overflow:hidden;
-  font-size:12px;
-  text-align:center;
+
+  /* NO animation */
+  transition:0.2s;
 }
 
-/* HOVER */
+/* Simple hover (no moving lines) */
 .buttons a:hover{
   background:#00ff88;
   color:black;
-  box-shadow:0 0 30px #00ff88, 0 0 80px #00ff88;
 }
 
-/* BORDER ANIMATION */
-.buttons a span{ position:absolute; }
-
-.buttons a span:nth-child(1){
-  top:0; left:-100%;
-  width:100%; height:2px;
-  background:#00ff88;
-  animation:a1 1s linear infinite;
-}
-.buttons a span:nth-child(2){
-  right:0; top:-100%;
-  width:2px; height:100%;
-  background:#00ff88;
-  animation:a2 1s linear infinite;
-}
-.buttons a span:nth-child(3){
-  bottom:0; right:-100%;
-  width:100%; height:2px;
-  background:#00ff88;
-  animation:a3 1s linear infinite;
-}
-.buttons a span:nth-child(4){
-  left:0; bottom:-100%;
-  width:2px; height:100%;
-  background:#00ff88;
-  animation:a4 1s linear infinite;
-}
-
-@keyframes a1{100%{left:100%}}
-@keyframes a2{100%{top:100%}}
-@keyframes a3{100%{right:100%}}
-@keyframes a4{100%{bottom:100%}}
-
-/* =========================
-   ZAMMAD FORCE LAYER + COLOR
-========================= */
-.zammad-chat {
-  z-index:999999 !important;
-  position:fixed !important;
-}
-
-/* NEW COLOR APPLIED */
-.zammad-chat .zammad-chat-button,
-.zammad-chat .zammad-chat-header {
-  background:#0F0F0F !important;
-  color:#fff !important;
-}
 </style>
 </head>
 
 <body>
 
+<!-- Background container -->
 <div id="container"></div>
 
-<!-- =========================
-     BUTTONS
-========================= -->
+<!-- Title -->
+<div class="title">
+  <h2>Welcome to homeguardofbill-huoc</h2>
+  <h1 class="masked-text">HUOC</h1>
+</div>
+
+<!-- Buttons -->
 <div class="buttons">
-
-  <a href="https://startcontrol.com/alex" target="_blank">
-    <span></span><span></span><span></span><span></span>
-    TAKE CONTROL
-  </a>
-
-  <a href="https://startcontrol.com/alex/start" target="_blank">
-    <span></span><span></span><span></span><span></span>
-    DOWNLOAD REMOTE CONTROLS
-  </a>
-
-  <a href="https://outlook.office.com/bookwithme/...ep=mlink" target="_blank">
-    <span></span><span></span><span></span><span></span>
-    BOOK WITH ALEX
-  </a>
-
+  <a href="inside.html">INSIDE HUOC</a>
+  <a href="#">TAKE CONTROL</a>
+  <a href="#">DOWNLOAD REMOTE CONTROLS</a>
+  <a href="#">BOOK WITH ALEX</a>
+  <a href="#">HELPDESK</a>
+  <a href="#">DASHBOARD</a>
 </div>
 
 <!-- =========================
-     THREE.JS BACKGROUND
-========================= -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/88/three.min.js"></script>
-
-<script id="vertexShader" type="x-shader/x-vertex">
-void main(){
-  gl_Position = vec4(position,1.0);
-}
-</script>
-
-<script id="fragmentShader" type="x-shader/x-fragment">
-uniform vec2 u_resolution;
-uniform float u_time;
-uniform sampler2D u_noise;
-
-float hash(vec2 p){
-  return texture2D(u_noise,(p+0.5)/256.0).x;
-}
-
-float noise(vec2 uv){
-  vec2 i=floor(uv);
-  vec2 f=fract(uv);
-  vec2 u=f*f*(3.0-2.0*f);
-
-  return mix(mix(hash(i),hash(i+vec2(1,0)),u.x),
-             mix(hash(i+vec2(0,1)),hash(i+vec2(1,1)),u.x),u.y);
-}
-
-float fbm(vec2 uv){
-  float v=0.;
-  float a=.5;
-  for(int i=0;i<6;i++){
-    v+=a*noise(uv);
-    uv*=2.;
-    a*=.5;
-  }
-  return v;
-}
-
-void main(){
-  vec2 uv = gl_FragCoord.xy / u_resolution.xy;
-
-  float n = fbm(uv*4.0 + u_time*0.05);
-
-  vec3 col = mix(
-    vec3(0.1,0.0,0.0),
-    vec3(1.2,0.7,0.2),
-    n
-  );
-
-  float particles = 0.0;
-
-  for(int i=1;i<=15;i++){
-    float depth = float(i);
-    vec2 p = uv * (30.0 * depth);
-    p.y += u_time * (0.4 * depth);
-
-    float d = noise(p);
-    float dot = step(0.985 - depth*0.002, d);
-
-    particles += dot / depth;
-  }
-
-  col -= particles * 2.5;
-  col = pow(col, vec3(1.4));
-  col = clamp(col, 0.0, 1.0);
-
-  gl_FragColor = vec4(col,1.0);
-}
-</script>
-
-<script>
-let scene,camera,renderer,uniforms;
-
-function init(){
-  renderer = new THREE.WebGLRenderer({antialias:true});
-  renderer.setSize(window.innerWidth,window.innerHeight);
-  document.getElementById("container").appendChild(renderer.domElement);
-
-  scene = new THREE.Scene();
-  camera = new THREE.Camera();
-
-  uniforms = {
-    u_time:{value:0},
-    u_resolution:{value:new THREE.Vector2(window.innerWidth,window.innerHeight)},
-    u_noise:{
-      value:new THREE.TextureLoader().load(
-        "https://raw.githubusercontent.com/emmelleppi/noise-texture/master/perlin-noise.png"
-      )
-    }
-  };
-
-  const material = new THREE.ShaderMaterial({
-    uniforms,
-    vertexShader:document.getElementById("vertexShader").textContent,
-    fragmentShader:document.getElementById("fragmentShader").textContent
-  });
-
-  const mesh = new THREE.Mesh(new THREE.PlaneGeometry(2,2),material);
-  scene.add(mesh);
-}
-
-function animate(){
-  requestAnimationFrame(animate);
-  uniforms.u_time.value += 0.015;
-  renderer.render(scene,camera);
-}
-
-init();
-animate();
-</script>
-
-<!-- =========================
-     ZAMMAD CHAT (FINAL CORRECT)
+     ZAMMAD CHAT (GLOBAL)
 ========================= -->
 <script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
-
 <script>
 (function() {
-
   new ZammadChat({
-
-    /* EXACT FROM YOUR DESIGNER */
-    title: 'CheckRoger',
-    background: '#0F0F0F',
+    title: 'Chat With HUOC',
+    background: '#0D0202',
     fontSize: '12px',
     flat: true,
-    chatId: 1,
-
-    /* DO NOT BREAK IT AGAIN */
-    cssAutoload: true,
-
-    /* AUTO SHOW */
-    show: true,
-
-    /* DEBUG IF NEEDED */
-    debug: true
-
+    chatId: 1
   });
-
 })();
 </script>
 
