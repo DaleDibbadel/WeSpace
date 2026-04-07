@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>HUOC</title>
 
-<!-- Google font for HUOC -->
+<!-- Google font -->
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&display=swap" rel="stylesheet">
 
 <style>
@@ -22,7 +22,7 @@ html, body {
 }
 
 /* =========================
-   BACKGROUND CANVAS
+   BACKGROUND
 ========================= */
 #container {
   position:fixed;
@@ -32,7 +32,7 @@ html, body {
 }
 
 /* =========================
-   TITLE BLOCK
+   TITLE
 ========================= */
 .title {
   position:absolute;
@@ -42,7 +42,6 @@ html, body {
   z-index:2;
 }
 
-/* Subtitle */
 .title h2{
   letter-spacing:3px;
   opacity:0.6;
@@ -52,35 +51,29 @@ html, body {
 }
 
 /* =========================
-   🔥 HUOC TEXT MASKING ONLY
+   HUOC TEXT EFFECT
 ========================= */
 .masked-text{
   font-size:48px;
   font-weight:bold;
   font-family:'Montserrat', sans-serif;
 
-  /* Gradient that moves */
   background: linear-gradient(90deg, #00ff88, #ffffff, #00ff88);
   background-size:200%;
 
-  /* Clip gradient into text */
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 
-  /* Smooth shine animation (NOT blinking) */
   animation: shine 4s linear infinite;
-
-  margin:0;
 }
 
-/* Moves gradient across text */
 @keyframes shine {
   0% { background-position:0% }
   100% { background-position:200% }
 }
 
 /* =========================
-   BUTTON STACK (NO ANIMATION)
+   BUTTON STACK
 ========================= */
 .buttons{
   position:absolute;
@@ -92,24 +85,73 @@ html, body {
   z-index:2;
 }
 
-/* Static clean buttons */
+/* BUTTON BASE */
 .buttons a{
+  position:relative;
+  overflow:hidden;
+
   width:240px;
   height:60px;
   display:flex;
   align-items:center;
   justify-content:center;
 
-  border:2px solid #00ff88;
   color:#00ff88;
   text-decoration:none;
   letter-spacing:2px;
-
-  /* NO animation */
-  transition:0.2s;
+  border:2px solid #00ff88;
 }
 
-/* Simple hover (no moving lines) */
+/* SPANS (LINES) */
+.buttons a span{
+  position:absolute;
+  display:block;
+  background:#00ff88;
+}
+
+/* TOP */
+.buttons a span:nth-child(1){
+  top:0;
+  left:-100%;
+  width:100%;
+  height:2px;
+  animation:a1 1s linear infinite;
+}
+
+/* RIGHT */
+.buttons a span:nth-child(2){
+  top:-100%;
+  right:0;
+  width:2px;
+  height:100%;
+  animation:a2 1s linear infinite;
+}
+
+/* BOTTOM */
+.buttons a span:nth-child(3){
+  bottom:0;
+  right:-100%;
+  width:100%;
+  height:2px;
+  animation:a3 1s linear infinite;
+}
+
+/* LEFT */
+.buttons a span:nth-child(4){
+  bottom:-100%;
+  left:0;
+  width:2px;
+  height:100%;
+  animation:a4 1s linear infinite;
+}
+
+/* ANIMATIONS */
+@keyframes a1 { 100% { left:100%; } }
+@keyframes a2 { 100% { top:100%; } }
+@keyframes a3 { 100% { right:100%; } }
+@keyframes a4 { 100% { bottom:100%; } }
+
+/* HOVER */
 .buttons a:hover{
   background:#00ff88;
   color:black;
@@ -120,27 +162,52 @@ html, body {
 
 <body>
 
-<!-- Background container -->
 <div id="container"></div>
 
-<!-- Title -->
 <div class="title">
   <h2>Welcome to homeguardofbill-huoc</h2>
   <h1 class="masked-text">HUOC</h1>
 </div>
 
-<!-- Buttons -->
+<!-- =========================
+     BUTTONS
+========================= -->
 <div class="buttons">
-  <a href="inside.html">INSIDE HUOC</a>
-  <a href="#">TAKE CONTROL</a>
-  <a href="#">DOWNLOAD REMOTE CONTROLS</a>
-  <a href="#">BOOK WITH ALEX</a>
-  <a href="#">HELPDESK</a>
-  <a href="#">DASHBOARD</a>
+
+  <a href="inside.html">
+    <span></span><span></span><span></span><span></span>
+    INSIDE HUOC
+  </a>
+
+  <a href="https://startcontrol.com/alex" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    TAKE CONTROL
+  </a>
+
+  <a href="https://startcontrol.com/alex/start" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    DOWNLOAD REMOTE CONTROLS
+  </a>
+
+  <a href="https://outlook.office.com/bookwithme/" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    BOOK WITH ALEX
+  </a>
+
+  <a href="https://help.homeguardofbill-huoc.com/" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    HELPDESK
+  </a>
+
+  <a href="https://dashy.homeguardofbill-huoc.com/boards/Huoc" target="_blank">
+    <span></span><span></span><span></span><span></span>
+    DASHBOARD
+  </a>
+
 </div>
 
 <!-- =========================
-     ZAMMAD CHAT (GLOBAL)
+     ZAMMAD CHAT
 ========================= -->
 <script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
 <script>
