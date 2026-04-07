@@ -1,0 +1,338 @@
+<!DOCTYPE html> <!-- Tell the browser this is an HTML5 document -->
+<html lang="en"> <!-- Main page language -->
+
+<head>
+<meta charset="UTF-8"> <!-- Standard character encoding -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- Better mobile/browser scaling -->
+<title>Inside HUOC</title> <!-- Browser tab title -->
+
+<!-- ========================= -->
+<!-- FONT -->
+<!-- ========================= -->
+<!-- Load Montserrat to match the style of your original page -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* ========================= */
+/* BASE PAGE STYLING */
+/* ========================= */
+/* Main page colors and font */
+body{
+  margin:0; /* remove browser default margin */
+  background:#0a0a0a; /* dark background */
+  color:white; /* default text color */
+  font-family:'Montserrat', Arial; /* page font stack */
+}
+
+/* ========================= */
+/* TOP NAVIGATION BAR */
+/* ========================= */
+/* Fixed top nav bar just like your original page */
+.nav{
+  position:fixed; /* keep nav visible at the top */
+  top:0; /* stick to top edge */
+  width:100%; /* full width */
+  display:flex; /* horizontal layout */
+  justify-content:space-between; /* left side / right side */
+  padding:20px 40px; /* inner spacing */
+  background:#000; /* black nav background */
+  border-bottom:1px solid #111; /* subtle divider line */
+  z-index:1000; /* keep nav above content */
+  box-sizing:border-box; /* keep padding from breaking width */
+}
+
+/* General nav links */
+.nav a{
+  margin-left:20px; /* space between links */
+  color:#aaa; /* muted gray */
+  text-decoration:none; /* remove underline */
+}
+
+/* Hover effect for nav links */
+.nav a:hover{
+  color:#00ff88; /* neon green on hover */
+}
+
+/* Back button / logo styling */
+.logo{
+  color:#00ff88; /* green accent color */
+  font-weight:700; /* bold text */
+  text-decoration:none; /* no underline */
+}
+
+/* ========================= */
+/* HERO SECTION */
+/* ========================= */
+/* Top intro section */
+.hero{
+  padding-top:120px; /* leave room for fixed nav */
+  text-align:center; /* center headline text */
+}
+
+/* Main page heading */
+.hero h1{
+  color:#00ff88; /* green accent */
+  font-size:48px; /* large heading */
+}
+
+/* ========================= */
+/* STANDARD CONTENT SECTION */
+/* ========================= */
+/* Shared spacing/width rules for content blocks */
+.section{
+  padding:80px 40px; /* vertical and horizontal spacing */
+  max-width:1100px; /* keep content readable */
+  margin:auto; /* center the section block */
+}
+
+/* Section heading styling */
+.section h2{
+  color:#00ff88; /* green headings */
+}
+
+/* ========================= */
+/* GRID LAYOUT */
+/* ========================= */
+/* Responsive card grid */
+.grid{
+  display:grid; /* CSS grid layout */
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); /* responsive columns */
+  gap:20px; /* spacing between cards */
+}
+
+/* ========================= */
+/* CARD STYLE */
+/* ========================= */
+/* Generic content cards */
+.card{
+  background:#111; /* dark card background */
+  border:1px solid #222; /* subtle border */
+  padding:20px; /* inner spacing */
+  border-radius:10px; /* rounded corners */
+  transition:.3s; /* smooth hover transition */
+}
+
+/* Card hover accent */
+.card:hover{
+  border-color:#00ff88; /* green border on hover */
+}
+
+/* ========================= */
+/* LINK BOX STYLE */
+/* ========================= */
+/* Wide box used in Documents section */
+.link-box{
+  background:#111; /* dark background */
+  border:1px solid #222; /* subtle border */
+  padding:20px; /* inner spacing */
+  border-radius:10px; /* rounded corners */
+  margin-bottom:15px; /* spacing below */
+  display:flex; /* align text and link in one row */
+  justify-content:space-between; /* space out contents */
+  align-items:center; /* vertical align */
+}
+
+/* Link box hover effect */
+.link-box:hover{
+  border-color:#00ff88; /* green accent on hover */
+}
+
+/* Link styling inside the link box */
+.link-box a{
+  color:#00ff88; /* green link */
+  text-decoration:none; /* remove underline */
+}
+
+/* ========================= */
+/* PAYMENT BOX */
+/* ========================= */
+/* Special card for payment section */
+.payment-box{
+  background:#111; /* dark background */
+  border:1px solid #222; /* subtle border */
+  padding:40px; /* extra spacing */
+  border-radius:15px; /* softer corners */
+  max-width:500px; /* narrower centered box */
+  margin:auto; /* center horizontally */
+  text-align:center; /* center text */
+  transition:.3s; /* smooth hover transition */
+}
+
+/* Payment box hover effect */
+.payment-box:hover{
+  border-color:#00ff88; /* green border */
+  box-shadow:0 0 20px rgba(0,255,136,0.2); /* soft glow */
+}
+
+/* Payment button styling */
+.pay-btn{
+  margin-top:20px; /* space above button */
+  padding:15px 30px; /* button size */
+  background:#00ff88; /* green button fill */
+  color:#000; /* black text */
+  border:none; /* remove default border */
+  border-radius:8px; /* rounded corners */
+  font-weight:600; /* medium-bold text */
+  cursor:pointer; /* hand cursor on hover */
+  transition:.3s; /* smooth hover animation */
+}
+
+/* Payment button hover effect */
+.pay-btn:hover{
+  transform:translateY(-2px); /* slight lift */
+  box-shadow:0 5px 20px rgba(0,255,136,0.4); /* glow under button */
+}
+
+/* ========================= */
+/* ZAMMAD LAYER FIX */
+/* ========================= */
+/* Keep the chat above your content */
+.zammad-chat{
+  z-index:999999 !important;
+  position:fixed !important;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ========================= -->
+<!-- TOP NAVIGATION -->
+<!-- ========================= -->
+<div class="nav">
+
+  <!-- Back button added here so user can return to the landing page -->
+  <a href="indexTESTING.html" class="logo">← HUOC</a>
+
+  <!-- Original navigation links -->
+  <div>
+    <a href="#who">Who</a>
+    <a href="#services">Services</a>
+    <a href="#docs">Docs</a>
+    <a href="#files">Files</a>
+    <a href="#payment">Payment</a>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- HERO -->
+<!-- ========================= -->
+<div class="hero">
+  <h1>Inside HUOC</h1>
+  <p>Your gateway to everything HomeGuard of Bill</p>
+</div>
+
+<!-- ========================= -->
+<!-- WHO SECTION -->
+<!-- ========================= -->
+<div id="who" class="section">
+  <h2>Who Are We</h2>
+  <p>At HUOC, we are here for the small guys — people like you, people like us, and the communities around us. 
+    Whether it’s small projects, medium-scale work, or full consultation, we specialize in safeguarding your 
+    systems and keeping everything running smoothly. From Microsoft Office environments and electronic systems 
+    to servers, server management, and ongoing maintenance — we’ve got you covered.</p>
+
+  <div class="grid">
+    <div class="card">Databack up</div>
+    <div class="card">Client Focused</div>
+    <div class="card">Tech Driven</div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- SERVICES SECTION -->
+<!-- ========================= -->
+<!-- Keeping this commented out because that is how it exists in your original file -->
+<!--
+<div id="services" class="section">
+  <h2>Services Offered</h2>
+  <p>(Coming soon)</p>
+</div>
+-->
+
+<!-- ========================= -->
+<!-- DOCUMENTS SECTION -->
+<!-- ========================= -->
+<div id="docs" class="section">
+  <h2>Documents</h2>
+
+  <div class="link-box">
+    <span>Doc Portal</span>
+    <a href="https://notedawg.homeguardofbill-huoc.com" target="_blank" rel="noopener noreferrer">Open</a>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- FILES SECTION -->
+<!-- ========================= -->
+<div id="files" class="section">
+  <h2>Files</h2>
+
+  <div class="grid">
+    <div class="card">Client Resources</div>
+    <div class="card">Software Downloads</div>
+    <div class="card">Training Materials</div>
+    <div class="card">Templates</div>
+  </div>
+</div>
+
+<!-- ========================= -->
+<!-- PAYMENT SECTION -->
+<!-- ========================= -->
+<div id="payment" class="section">
+  <h2>Payment Portal</h2>
+
+  <div class="payment-box">
+    <h3>Secure Payment</h3>
+    <p>Pay your invoice securely through our payment portal.</p>
+
+    <!-- Clicking this button sends the user to your Stripe payment page -->
+    <button class="pay-btn" onclick="goToPayment()">
+      Go to Payment Portal
+    </button>
+  </div>
+</div>
+
+<script>
+/*
+  Send the user to your payment link.
+  Keeping this as a simple redirect exactly like your original file.
+*/
+function goToPayment(){
+  window.location.href = "https://buy.stripe.com/eVq28r6Lx78HdRJ1lP6g801";
+}
+</script>
+
+<!-- ========================= -->
+<!-- ZAMMAD CHAT -->
+<!-- ========================= -->
+<!-- Load the official no-jQuery Zammad chat widget -->
+<script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
+
+<script>
+/*
+  Initialize the Zammad chat widget for this page too.
+
+  title      = text shown on the closed widget
+  background = widget background color
+  fontSize   = text size inside widget
+  flat       = flatter visual style
+  chatId     = your Zammad chat topic ID
+  show       = true means automatically show when ready
+  debug      = true so console messages are visible during testing
+*/
+(function() {
+  new ZammadChat({
+    title: 'Chat withHUOC',
+    background: '#2B0707',
+    fontSize: '12px',
+    flat: true,
+    chatId: 1,
+    show: true,
+    debug: true
+  });
+})();
+</script>
+
+</body>
+</html>

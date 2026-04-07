@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Inside HUOC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  background:#0a0a0a;
+  color:white;
+  font-family:'Montserrat', Arial;
+}
+
+/* NAVBAR */
+.nav{
+  position:fixed;
+  top:0;
+  width:100%;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:20px 40px;
+  background:#000;
+  z-index:100;
+  border-bottom:1px solid #111;
+}
+
+.nav .logo{
+  color:#00ff88;
+  font-weight:700;
+}
+
+.nav .links a{
+  margin-left:25px;
+  color:#aaa;
+  text-decoration:none;
+  font-size:14px;
+}
+
+.nav .links a:hover{
+  color:#00ff88;
+}
+
+/* HERO */
+.hero{
+  padding-top:120px;
+  text-align:center;
+}
+
+.hero h1{
+  font-size:48px;
+  color:#00ff88;
+}
+
+.hero p{
+  color:#aaa;
+}
+
+/* SECTION */
+.section{
+  padding:80px 40px;
+  max-width:1100px;
+  margin:auto;
+}
+
+.section h2{
+  color:#00ff88;
+  margin-bottom:10px;
+}
+
+.section p{
+  color:#aaa;
+  margin-bottom:30px;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:20px;
+}
+
+/* CARD */
+.card{
+  background:#111;
+  border:1px solid #222;
+  padding:20px;
+  border-radius:10px;
+  transition:0.3s;
+}
+
+.card:hover{
+  border-color:#00ff88;
+  transform:translateY(-5px);
+}
+
+.card h3{
+  margin:10px 0;
+}
+
+.card p{
+  color:#777;
+  font-size:14px;
+}
+
+/* BUTTON */
+.btn{
+  display:inline-block;
+  margin-top:15px;
+  padding:10px 15px;
+  background:#00ff88;
+  color:black;
+  text-decoration:none;
+  border-radius:5px;
+}
+
+/* CONTACT */
+.contact{
+  text-align:center;
+}
+
+.contact input{
+  padding:12px;
+  width:250px;
+  border:none;
+  margin-right:10px;
+}
+
+.contact button{
+  padding:12px 20px;
+  background:#00ff88;
+  border:none;
+  cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAV -->
+<div class="nav">
+  <div class="logo">HUOC</div>
+  <div class="links">
+    <a href="#who">WHO ARE WE</a>
+    <a href="#services">SERVICES</a>
+    <a href="#what">WHAT WE DO</a>
+    <a href="#payment">PAYMENT</a>
+    <a href="#docs">DOCUMENTS</a>
+    <a href="#files">FILES</a>
+    <a href="#contact">CONTACT</a>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero">
+  <h1>Inside HUOC</h1>
+  <p>Your gateway to everything HomeGuard of Bill</p>
+</div>
+
+<!-- WHO -->
+<div id="who" class="section">
+  <h2>Who Are We</h2>
+  <p>Managed IT services focused on security and reliability.</p>
+
+  <div class="grid">
+    <div class="card"><h3>Protection First</h3><p>Enterprise-grade security.</p></div>
+    <div class="card"><h3>Client Focused</h3><p>Reliable long-term support.</p></div>
+    <div class="card"><h3>Tech Driven</h3><p>Modern infrastructure solutions.</p></div>
+  </div>
+</div>
+
+<!-- SERVICES -->
+<div id="services" class="section">
+  <h2>Services Offered</h2>
+
+  <div class="grid">
+    <div class="card"><h3>Managed IT</h3></div>
+    <div class="card"><h3>Networking</h3></div>
+    <div class="card"><h3>Cybersecurity</h3></div>
+    <div class="card"><h3>Backup</h3></div>
+    <div class="card"><h3>Cloud</h3></div>
+    <div class="card"><h3>Help Desk</h3></div>
+  </div>
+</div>
+
+<!-- WHAT -->
+<div id="what" class="section">
+  <h2>What We Do</h2>
+
+  <div class="grid">
+    <div class="card">Monitoring</div>
+    <div class="card">Network Setup</div>
+    <div class="card">IT Consulting</div>
+    <div class="card">Threat Detection</div>
+    <div class="card">Vendor Management</div>
+    <div class="card">Training</div>
+  </div>
+</div>
+
+<!-- PAYMENT -->
+<div id="payment" class="section">
+  <h2>Payment</h2>
+
+  <div class="card">
+    <h3>Make a Payment</h3>
+    <p>Secure payment portal</p>
+    <a class="btn" href="#">Go to Payment</a>
+  </div>
+</div>
+
+<!-- DOCUMENTS -->
+<div id="docs" class="section">
+  <h2>Documents</h2>
+
+  <div class="grid">
+    <div class="card">Service Agreement</div>
+    <div class="card">Privacy Policy</div>
+    <div class="card">Terms</div>
+    <div class="card">Onboarding Guide</div>
+  </div>
+</div>
+
+<!-- FILES -->
+<div id="files" class="section">
+  <h2>Files</h2>
+
+  <div class="grid">
+    <div class="card">Client Resources</div>
+    <div class="card">Software Downloads</div>
+    <div class="card">Training</div>
+    <div class="card">Templates</div>
+  </div>
+</div>
+
+<!-- CONTACT -->
+<div id="contact" class="section contact">
+  <h2>Get In Touch</h2>
+  <p>Leave your number and we’ll call you</p>
+
+  <input placeholder="Enter phone number">
+  <button>Request Call</button>
+</div>
+
+</body>
+</html>
