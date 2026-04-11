@@ -227,15 +227,16 @@ body{
 <!-- ========================= -->
 <div id="who" class="section">
   <h2>Who Are We</h2>
-  <p>At HUOC, we are here for the small guys — people like you, people like us, and the communities around us. 
-    Whether it’s small projects, medium-scale work, or full consultation, we specialize in safeguarding your 
+  <p>At HUOC, we are — people like you, people like us, and the communities around us. 
+    we specialize in you, 
     systems and keeping everything running smoothly. From Microsoft Office environments and electronic systems 
-    to servers, server management, and ongoing maintenance — we’ve got you covered.</p>
+    to servers, server management, and ongoing maintenance
+    If HUOC can't do it.. 	(˵ ͡° ͜ʖ ͡°˵).</p>
 
   <div class="grid">
-    <div class="card">Databack up</div>
-    <div class="card">Client Focused</div>
-    <div class="card">Tech Driven</div>
+    <div class="card">HomeLab</div>
+    <div class="card">Focused</div>
+    <div class="card">About that Tech Life</div>
   </div>
 </div>
 
@@ -306,21 +307,9 @@ function goToPayment(){
 <!-- ========================= -->
 <!-- ZAMMAD CHAT -->
 <!-- ========================= -->
-<!-- Load the official no-jQuery Zammad chat widget -->
 <script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
 
 <script>
-/*
-  Initialize the Zammad chat widget for this page too.
-
-  title      = text shown on the closed widget
-  background = widget background color
-  fontSize   = text size inside widget
-  flat       = flatter visual style
-  chatId     = your Zammad chat topic ID
-  show       = true means automatically show when ready
-  debug      = true so console messages are visible during testing
-*/
 (function() {
   new ZammadChat({
     title: 'Chat withHUOC',
@@ -332,6 +321,31 @@ function goToPayment(){
     debug: true
   });
 })();
+</script>
+
+<!-- ========================= -->
+<!-- CHATWOOT CHAT -->
+<!-- ========================= -->
+<script>
+  window.chatwootSettings = {
+    position: "right",
+    type: "standard",
+    launcherTitle: ""
+  };
+
+  (function(d,t) {
+    var BASE_URL="https://app.chatwoot.com";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: 'tuZMd1tkMWCkm2edE8Vod2Di',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
 </script>
 
 </body>
