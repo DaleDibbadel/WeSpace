@@ -222,5 +222,42 @@ html, body {
 })();
 </script>
 
+<!-- ZAMMAD CHAT -->
+<script src="https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js"></script>
+<script>
+(function() {
+  new ZammadChat({
+    title: 'Chat With HUOC',
+    background: '#0D0202',
+    fontSize: '12px',
+    flat: true,
+    chatId: 1
+  });
+})();
+</script>
+
+<!-- CHATWOOT CHAT -->
+<script>
+  window.chatwootSettings = {
+    position: "right",
+    type: "standard",
+    launcherTitle: ""
+  };
+
+  (function(d,t) {
+    var BASE_URL="https://app.chatwoot.com";
+    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
+    g.src=BASE_URL+"/packs/js/sdk.js";
+    g.async = true;
+    s.parentNode.insertBefore(g,s);
+    g.onload=function(){
+      window.chatwootSDK.run({
+        websiteToken: 'tuZMd1tkMWCkm2edE8Vod2Di',
+        baseUrl: BASE_URL
+      })
+    }
+  })(document,"script");
+</script>
+
 </body>
 </html>
