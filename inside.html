@@ -227,14 +227,14 @@ body{
 <!-- ========================= -->
 <div id="who" class="section">
   <h2>Who Are We</h2>
-  <p>At HUOC, we are — people like you, people like us, and the communities around us. 
-    we specialize in you, 
-    systems and keeping everything running smoothly. From Microsoft Office environments and electronic systems 
-    to servers, server management, and ongoing maintenance
+  <p>At HUOC, we are — people like you, but better.
+    we specialize in what you do not. 
+   From Microsoft Office environments and electronic systems 
+    to server maintenance, server management,
     If HUOC can't do it.. 	(˵ ͡° ͜ʖ ͡°˵).</p>
 
   <div class="grid">
-    <div class="card">HomeLab</div>
+    <div class="card">IT consultation </div>
     <div class="card">Focused</div>
     <div class="card">About that Tech Life</div>
   </div>
@@ -258,15 +258,15 @@ body{
   <h2>Documents</h2>
 
   <div class="link-box">
-    <span>Doc Portal</span>
-    <a href="https://notedawg.homeguardofbill-huoc.com" target="_blank" rel="noopener noreferrer">Open</a>
+    <span>NextCloud Doc Share</span>
+    <a href="https://next.homeguardofbill-huoc.com/index.php/s/C8RrqSaNWysRknZ" target="_blank" rel="noopener noreferrer">OpenME</a>
   </div>
 </div>
 
 <!-- ========================= -->
 <!-- FILES SECTION -->
 <!-- ========================= -->
-<div id="files" class="section">
+<!--<div id="files" class="section">
   <h2>Files</h2>
 
   <div class="grid">
@@ -326,26 +326,41 @@ function goToPayment(){
 <!-- ========================= -->
 <!-- CHATWOOT CHAT -->
 <!-- ========================= -->
+<!-- =========================
+     CHATWOOT CHAT
+========================= -->
+
 <script>
-  window.chatwootSettings = {
-    position: "right",
-    type: "standard",
-    launcherTitle: ""
+window.chatwootSettings = {
+  position: "right",
+  type: "standard",
+  launcherTitle: ""
+};
+
+(function(d,t) {
+
+  var BASE_URL = "https://app.chatwoot.com";
+
+  var g = d.createElement(t),
+      s = d.getElementsByTagName(t)[0];
+
+  g.src = BASE_URL + "/packs/js/sdk.js";
+
+  /* IMPORTANT */
+  g.defer = true;
+
+  s.parentNode.insertBefore(g,s);
+
+  g.onload = function(){
+
+    window.chatwootSDK.run({
+      websiteToken: 'tuZMd1tkMWCkm2edE8Vod2Di',
+      baseUrl: BASE_URL
+    });
+
   };
 
-  (function(d,t) {
-    var BASE_URL="https://app.chatwoot.com";
-    var g=d.createElement(t),s=d.getElementsByTagName(t)[0];
-    g.src=BASE_URL+"/packs/js/sdk.js";
-    g.async = true;
-    s.parentNode.insertBefore(g,s);
-    g.onload=function(){
-      window.chatwootSDK.run({
-        websiteToken: 'tuZMd1tkMWCkm2edE8Vod2Di',
-        baseUrl: BASE_URL
-      })
-    }
-  })(document,"script");
+})(document,"script");
 </script>
 
 </body>
