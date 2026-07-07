@@ -8,11 +8,11 @@ export const siteConfig = {
   links: {
     takeControl: "https://startcontrol.com/alex",
     downloadRemote: "https://startcontrol.com/alex/start",
-    bookWithAlex: "https://outlook.office.com/bookwithme/",
+    bookWithAlex: "https://outlook.office.com/bookwithme/user/ab9a9459c97748c789decaef675c6ec4@brotha.xyz?anonymous&ismsaljsauthenabled&ep=plink",
     helpdesk: "https://help.homeguardofbill-huoc.com/",
     dashboard: "https://dashy.homeguardofbill-huoc.com/boards/Huoc",
     nextcloudDocs:
-      "https://next.homeguardofbill-huoc.com/index.php/s/C8RrqSaNWysRknZ",
+      "https://next.homeguardofbill-huoc.com/index.php/s/eaLKozLDQoYiQHX",
     stripePayment: "https://buy.stripe.com/eVq28r6Lx78HdRJ1lP6g801",
   },
 } as const
