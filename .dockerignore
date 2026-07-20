@@ -1,5 +1,6 @@
-﻿*
-!dist
-!dist/**
-!Dockerfile
-!nginx-default.conf
+.git
+node_modules
+__MACOSX
+.DS_Store
+*.log
+old
