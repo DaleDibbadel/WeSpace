@@ -16,16 +16,11 @@ All tests ran against the isolated staging instance (`huoc-staging`, port 8091, 
 | F2 | No forward move while tip is bad | deployer tick after rollback with d4080ad still the tip | candidate fails again, still serving 251329eb | log shows second candidate failure; serving 251329eb | PASS |
 | G | Forward recovery | `staging` reset to dev (0dd7be4), deployer tick while pinned at 251329e | redeploys good tip | gate `all 3 CI check-run(s) green for 0dd7be4f` (dev push, staging push and PR#18 each run CI), build 19 s, `DEPLOYED 0dd7be4f`, serving 0dd7be4f, title `HUOC`, image label `huoc.sha`=0dd7be4f; 23 s | PASS |
 | G0 | Gate waits while CI is still running | tick at 15:46:31 with 2 of 3 runs in progress | no deploy | held back (message said "refusing"; now distinguishes `still running; waiting` from `FAILED; refusing`) | PASS |
-| H | Unattended operation (no Mac, no interactive SSH) | `huoc-deploy@staging.timer` | deploy log entries produced by the timer alone | requires root install: `sudo bash /mnt/Deadpool-1/huoc-deploy/systemd/install-staging-timer.sh` | pending (root) |
-| I | Reboot persistence | ZimaBlade reboot | timer re-arms 90 s after boot | not executed (reboot is disruptive; unit has `WantedBy=timers.target`, `OnBootSec=90s`) | deferred |
+| H | Unattended operation (no Mac, no interactive SSH) | commit edcce8d pushed from HUOC-UTILITY at 15:53:37; nothing run on ZimaBlade | timer alone deploys | `huoc-deploy@staging.timer` fired 15:54:26 (`ExecMainStartTimestamp`), log: gate green → fetch → build → `DEPLOYED edcce8d3 on :8091` at 15:54:50; serving edcce8d3; 73 s push-to-live | PASS |
+| I | Reboot persistence | ZimaBlade reboot | timer re-arms 90 s after boot | not executed (reboot is disruptive); unit installed in `/etc/systemd/system`, `enabled`, `WantedBy=timers.target`, `OnBootSec=90s`; Docker guarded by `RequiresMountsFor=/mnt/Deadpool-1` | by design |
 | J | Concurrency guard | two deployer runs at once | second exits "another deploy is running" | `flock -n` in script; not separately exercised | by design |
 | K | Production isolation | all of the above | `huoc-v1` untouched, NPM untouched, no port 8090/80/443 change | verified after every test (container start time and image unchanged; 200s) | PASS |
 
 Improvements made from the evidence: the CI gate now reports in-progress runs as "waiting" and only failures as "refusing"; images now carry `huoc.sha`/`huoc.built` labels (rollback log said "sha unknown"), and a tip that fails build or health is remembered in `failed.sha` so the timer does not rebuild it every two minutes (E2/F2 showed a 36 s rebuild per tick).
 
 Not part of staging: production cutover (requires owner approval), NPM re-pointing, `main` merge.
-
-
-## Test H execution
-
-Commit pushed from HUOC-UTILITY at 2026-11-01T15:53:33.6528630-06:00; no command was run on ZimaBlade afterwards. The deployment below was performed by huoc-deploy@staging.timer alone.
