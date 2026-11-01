@@ -1,0 +1,10 @@
+[Unit]
+Description=HUOC pull-based deploy (%i)
+After=network-online.target docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=casaos
+Group=docker
+ExecStart=/mnt/Deadpool-1/huoc-deploy/bin/huoc-deploy.sh /mnt/Deadpool-1/huoc-deploy/%i.env

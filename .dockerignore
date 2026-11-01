@@ -1,6 +1,8 @@
-.git
 node_modules
+dist
+.git
+.github
+deploy
+*.md
 __MACOSX
 .DS_Store
-*.log
-old

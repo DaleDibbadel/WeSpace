@@ -18,5 +18,9 @@ export default defineConfig([
     languageOptions: {
       globals: globals.browser,
     },
+    rules: {
+      // shadcn/ui exports `buttonVariants` next to the Button component; allow that named export.
+      'react-refresh/only-export-components': ['warn', { allowConstantExport: true, allowExportNames: ['buttonVariants'] }],
+    },
   },
 ])
