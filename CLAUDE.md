@@ -11,7 +11,7 @@ Project rules for anyone (human or Claude) working on this repository. These are
 ## Hard rules
 1. Development happens on `HUOC-UTILITY` through VS Code Remote-SSH. The Mac (or any laptop) is a remote control, never a dependency: the pipeline must work with it offline.
 2. Never edit production files on ZimaBlade directly. Never `docker exec` into `huoc-v1` to change content.
-3. `main` is protected (1 approving review, no force-push, no deletion). Never bypass or weaken protection. Promotion is `dev` → PR → `main`; the obsolete static site that `main` still contains must never be deployed again.
+3. `main` is protected (1 approving review, required status check `typecheck / lint / build`, branch must be up to date, no force-push, no deletion). Never bypass or weaken protection. Promotion is `dev` → PR → `main`; the obsolete static site that `main` still contains must never be deployed again.
 4. Never commit secrets. Deployment needs no GitHub token: the deployer pulls the public repo and reads public check-runs.
 5. Every release must have a verified rollback (`deploy/huoc-rollback.sh`, image tag `:previous`).
 6. Evidence over existence: a step is done when its output is recorded (CI run id, deployed SHA, health code), not when a file exists.

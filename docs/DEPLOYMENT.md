@@ -19,7 +19,7 @@
 | another run in progress | `flock`, exit 0 |
 
 ## Promotion dev → main (not a deployment until cutover)
-`main` still contains the obsolete static site, so a plain merge of PR #18 conflicts. Correct promotion: on `dev`, `git merge -s ours main` (keeps dev's tree, records main as a parent), push dev, then PR #18 becomes a clean fast-forward whose result tree equals dev. Merging requires one approving review (owner decision; `enforce_admins` is off so the repository admin can complete it). Recommended, owner-approved change to protection: require the status check `typecheck / lint / build` on `main`.
+`main` still contains the obsolete static site, so a plain merge of PR #18 conflicts. Correct promotion: on `dev`, `git merge -s ours main` (keeps dev's tree, records main as a parent), push dev, then PR #18 becomes a clean fast-forward whose result tree equals dev. `main` protection (as of 2026-11-01 16:45 CST, owner-approved): 1 approving review (stale reviews dismissed), **required status check `typecheck / lint / build` with "require branches to be up to date"**, no force-push, no deletion, `enforce_admins` off. A PR cannot be merged until CI is green on its head.
 
 ## Production (ACTIVE since 2026-11-01 16:34 CST)
 - Instance: `NAME=prod BRANCH=main PORT=8092 CI_GATE=1` (`deploy/production.env`; installed as `/mnt/Deadpool-1/huoc-deploy/prod.env`). Timer `huoc-deploy@prod.timer` every 2 min. Container `huoc-prod` on 8092; NPM host 42 (`helpdesk.homeguardofbill-huoc.com`) forwards to 10.0.0.201:8092.
