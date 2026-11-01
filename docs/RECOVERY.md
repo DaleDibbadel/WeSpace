@@ -8,6 +8,11 @@ gunzip -c /mnt/Deadpool-1/huoc-recovery/baseline-20261101-083521/huoc-v1.image.t
 docker run -d --name huoc-v1 --restart unless-stopped -p 8090:80 huoc-v1:latest
 ```
 
+## Production rollback
+- Fast (seconds): `bash /mnt/Deadpool-1/huoc-deploy/bin/huoc-rollback.sh /mnt/Deadpool-1/huoc-deploy/prod.env` → previous `huoc-prod` image back on 8092.
+- Legacy fallback (while `huoc-v1` exists): NPM host 42 forward port 8092 → 8090 (`docker start huoc-v1` first if it was stopped). Pre-cutover config and responses: `/mnt/Deadpool-1/huoc-recovery/cutover-20261101/`.
+- Full rebuild from archive: see baseline below.
+
 ## Staging rollback
 `bash /mnt/Deadpool-1/huoc-deploy/bin/huoc-rollback.sh /mnt/Deadpool-1/huoc-deploy/staging.env` → previous image back on 8091 within ~3 s. Verified in docs/VALIDATION.md (test F).
 

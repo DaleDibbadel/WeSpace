@@ -1,6 +1,23 @@
 # Production cutover — approval checkpoint (STOP: owner approval required)
 
-Status 2026-11-01 16:00 CST: **staging validated (docs/VALIDATION.md, tests A–H, K PASS). Production has not been changed.** Nothing below runs until the owner approves in writing.
+## Status: EXECUTED (option A) — 2026-11-01
+
+| Step | Time (CST) | Evidence |
+|---|---|---|
+| Owner approval of option A | 16:0x | chat, written |
+| PR #18 merged (one-time admin bypass explicitly authorized at head 1a0ee28; protection unchanged) | 16:12 | main = `bd3c160` (parents 1bc36a5 + 1a0ee28), merged by DaleDibbadel |
+| CI on main commit | 16:25–16:26 | `workflow_dispatch` run 41357064887: typecheck / lint / build success (main's ci.yml still lacked the main trigger; fixed on dev at 1885e77) |
+| A1 prod timer enabled (owner, root) | 16:30:03 | `huoc-deploy@prod.timer` enabled; gate green for bd3c1606; build 20 s; `DEPLOYED bd3c1606 on :8092` 16:30:26 |
+| A2 huoc-prod verified | 16:31 | :8092 200, `/DEPLOYED_SHA.txt` = bd3c160…, title `HUOC`, heading "Expertise in", SPA 200, assets 200 |
+| A3 NPM host 42 forward port 8090 → 8092 (owner, NPM UI) | 16:34 | conf diff `set $port 8090 → 8092`; public HTTPS HTTP/2 200, title `HUOC`, served SHA bd3c160…, cert and security headers identical to before |
+| A4 burn-in | 16:34 → 2026-11-02 16:34 | `huoc-v1` left running on 8090 (unreferenced) |
+| A5 stop `huoc-v1` | pending after burn-in | owner decision; image archived in baseline-20261101-083521 |
+
+Rollback (any time): NPM host 42 forward port back to 8090 (`huoc-v1` is still running). Pre/post evidence: `/mnt/Deadpool-1/huoc-recovery/cutover-20261101/`.
+
+---
+
+Original checkpoint text follows (as approved).
 
 ## 1. Current production (unchanged)
 - Container `huoc-v1` (image `fb6f87e3…`, created 2026-07-20, started 2026-10-31T01:04:51Z, `--restart unless-stopped`), port 8090 → NPM proxy host 42 `helpdesk.homeguardofbill-huoc.com` → public HTTPS 200.
