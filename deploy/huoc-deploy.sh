@@ -22,6 +22,7 @@ mkdir -p "$STATE_DIR/builds"
 LOG="$STATE_DIR/deploy.log"
 LOCK="$STATE_DIR/.lock"
 DEPLOYED_FILE="$STATE_DIR/deployed.sha"
+FAILED_FILE="$STATE_DIR/failed.sha"
 IMAGE="huoc-$NAME"
 CONTAINER="huoc-$NAME"
 
@@ -41,6 +42,9 @@ healthy(){ # $1 = port
 
 if [ "$TARGET_SHA" = "$DEPLOYED_SHA" ] && running && healthy "$PORT"; then
   log "up to date at ${TARGET_SHA:0:8}; healthy; nothing to do"; exit 0
+fi
+if [ "$TARGET_SHA" = "$(cat "$FAILED_FILE" 2>/dev/null || true)" ]; then
+  log "tip ${TARGET_SHA:0:8} already failed build/health; waiting for a new commit on $BRANCH"; exit 0
 fi
 
 if [ "$CI_GATE" = "1" ]; then
@@ -64,7 +68,7 @@ test -f "$BUILD_DIR/Dockerfile" || { log "no Dockerfile at ${TARGET_SHA:0:8}; ab
 printf '%s\n' "$TARGET_SHA" > "$BUILD_DIR/public/DEPLOYED_SHA.txt" 2>/dev/null || true
 
 log "building image $IMAGE:$TARGET_SHA"
-docker build --pull -q --build-arg GIT_SHA="$TARGET_SHA" -t "$IMAGE:$TARGET_SHA" "$BUILD_DIR" >>"$LOG" 2>&1 || { log "docker build FAILED; current release untouched"; exit 1; }
+docker build --pull -q --build-arg GIT_SHA="$TARGET_SHA" --label huoc.sha="$TARGET_SHA" --label huoc.built="$(date -Is)" -t "$IMAGE:$TARGET_SHA" "$BUILD_DIR" >>"$LOG" 2>&1 || { log "docker build FAILED; current release untouched"; printf '%s\n' "$TARGET_SHA" > "$FAILED_FILE"; exit 1; }
 
 CANDIDATE="${CONTAINER}-candidate"
 CAND_PORT=$((PORT + 10000))
@@ -73,7 +77,7 @@ docker run -d --name "$CANDIDATE" -p "127.0.0.1:$CAND_PORT:80" "$IMAGE:$TARGET_S
 ok=0; for i in $(seq 1 15); do healthy "$CAND_PORT" && { ok=1; break; }; sleep 1; done
 if [ "$ok" != "1" ]; then
   log "candidate FAILED health check; logs:"; docker logs --tail 20 "$CANDIDATE" >>"$LOG" 2>&1 || true
-  docker rm -f "$CANDIDATE" >/dev/null 2>&1 || true; exit 1
+  docker rm -f "$CANDIDATE" >/dev/null 2>&1 || true; printf '%s\n' "$TARGET_SHA" > "$FAILED_FILE"; exit 1
 fi
 SERVED_SHA="$(curl -s --max-time 5 "http://127.0.0.1:$CAND_PORT/DEPLOYED_SHA.txt" | tr -d '[:space:]' || true)"
 [ "$SERVED_SHA" = "$TARGET_SHA" ] || log "warning: candidate serves DEPLOYED_SHA '$SERVED_SHA' (expected $TARGET_SHA)"
@@ -94,7 +98,7 @@ if [ "$ok" != "1" ]; then
   healthy "$PORT" && log "rollback healthy" || log "ROLLBACK ALSO UNHEALTHY - manual attention required"
   exit 1
 fi
-printf '%s\n' "$TARGET_SHA" > "$DEPLOYED_FILE"
+printf '%s\n' "$TARGET_SHA" > "$DEPLOYED_FILE"; rm -f "$FAILED_FILE"
 log "DEPLOYED ${TARGET_SHA:0:8} on :$PORT (previous kept as $IMAGE:previous)"
 # prune old build dirs
 ls -1dt "$STATE_DIR"/builds/* 2>/dev/null | tail -n +$((KEEP_BUILDS+1)) | xargs -r rm -rf
