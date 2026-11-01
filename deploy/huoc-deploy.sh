@@ -51,11 +51,13 @@ if [ "$CI_GATE" = "1" ]; then
   CHECKS="$(curl -s --max-time 15 -H 'Accept: application/vnd.github+json' \
     "https://api.github.com/repos/$API_REPO/commits/$TARGET_SHA/check-runs?per_page=50")" || CHECKS=""
   TOTAL="$(printf '%s' "$CHECKS" | jq -r '.total_count // 0' 2>/dev/null || echo 0)"
-  BAD="$(printf '%s' "$CHECKS" | jq -r '[.check_runs[]? | select(.name|test("CI|typecheck|lint|build";"i")) | select(.status!="completed" or .conclusion!="success")] | length' 2>/dev/null || echo 1)"
+  FAILED="$(printf '%s' "$CHECKS" | jq -r '[.check_runs[]? | select(.name|test("CI|typecheck|lint|build";"i")) | select(.status=="completed" and .conclusion!="success")] | length' 2>/dev/null || echo 1)"
+  PENDING="$(printf '%s' "$CHECKS" | jq -r '[.check_runs[]? | select(.name|test("CI|typecheck|lint|build";"i")) | select(.status!="completed")] | length' 2>/dev/null || echo 1)"
   CI_RUNS="$(printf '%s' "$CHECKS" | jq -r '[.check_runs[]? | select(.name|test("CI|typecheck|lint|build";"i"))] | length' 2>/dev/null || echo 0)"
   if [ "$TOTAL" = "0" ] || [ "$CI_RUNS" = "0" ]; then log "CI gate: no CI check-runs yet for ${TARGET_SHA:0:8} (total=$TOTAL); waiting"; exit 0; fi
-  if [ "$BAD" != "0" ]; then log "CI gate: $BAD CI check-run(s) not successful for ${TARGET_SHA:0:8}; refusing to deploy"; exit 0; fi
-  log "CI gate: all CI check-runs green for ${TARGET_SHA:0:8}"
+  if [ "$FAILED" != "0" ]; then log "CI gate: $FAILED CI check-run(s) FAILED for ${TARGET_SHA:0:8}; refusing to deploy"; exit 0; fi
+  if [ "$PENDING" != "0" ]; then log "CI gate: $PENDING CI check-run(s) still running for ${TARGET_SHA:0:8}; waiting"; exit 0; fi
+  log "CI gate: all $CI_RUNS CI check-run(s) green for ${TARGET_SHA:0:8}"
 fi
 
 BUILD_DIR="$STATE_DIR/builds/$TARGET_SHA"
