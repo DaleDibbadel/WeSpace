@@ -4,7 +4,7 @@ name: CI
 # Steps: locked install -> typecheck -> lint -> production build -> upload dist as evidence.
 on:
   push:
-    branches: [dev]
+    branches: [dev, staging]
   pull_request:
     branches: [main]
   workflow_dispatch:
