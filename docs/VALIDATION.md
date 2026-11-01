@@ -24,3 +24,8 @@ All tests ran against the isolated staging instance (`huoc-staging`, port 8091, 
 Improvements made from the evidence: the CI gate now reports in-progress runs as "waiting" and only failures as "refusing"; images now carry `huoc.sha`/`huoc.built` labels (rollback log said "sha unknown"), and a tip that fails build or health is remembered in `failed.sha` so the timer does not rebuild it every two minutes (E2/F2 showed a 36 s rebuild per tick).
 
 Not part of staging: production cutover (requires owner approval), NPM re-pointing, `main` merge.
+
+
+## Test H execution
+
+Commit pushed from HUOC-UTILITY at 2026-11-01T15:53:33.6528630-06:00; no command was run on ZimaBlade afterwards. The deployment below was performed by huoc-deploy@staging.timer alone.
