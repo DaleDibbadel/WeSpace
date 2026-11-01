@@ -1,0 +1,11 @@
+[Unit]
+Description=Run HUOC deploy check for %i every 2 minutes
+
+[Timer]
+OnBootSec=90s
+OnUnitActiveSec=2min
+AccuracySec=20s
+Unit=huoc-deploy@%i.service
+
+[Install]
+WantedBy=timers.target

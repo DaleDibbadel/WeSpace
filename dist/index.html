@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>vite-app</title>
+      <link rel="icon" type="image/png" href="/favicon.png" />
+    <script type="module" crossorigin src="/assets/index-DVe7odm1.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-CDlhtkOX.css">
+  </head>
+  <body>
+    <div id="root"></div>
+  
+<!-- HUOC_CHAT_WIDGETS_START -->
+
+<!-- ZAMMAD CHAT - default OFF -->
+<script>
+var HUOC_ENABLE_ZAMMAD = false;
+
+window.addEventListener("load", function () {
+  if (!HUOC_ENABLE_ZAMMAD) return;
+
+  var zammadScript = document.createElement("script");
+  zammadScript.src = "https://help.homeguardofbill-huoc.com/assets/chat/chat-no-jquery.min.js";
+
+  zammadScript.onload = function () {
+    if (typeof ZammadChat !== "undefined") {
+      new ZammadChat({
+        title: "chat me",
+        background: "#010404",
+        fontSize: "12px",
+        chatId: 1
+      });
+    }
+  };
+
+  document.body.appendChild(zammadScript);
+});
+</script>
+
+<!-- CHATWOOT CHAT - active -->
+<script>
+window.chatwootSettings = {
+  position: "right",
+  type: "standard",
+  launcherTitle: ""
+};
+
+(function(d,t) {
+  var BASE_URL = "https://app.chatwoot.com";
+  var g = d.createElement(t);
+  var s = d.getElementsByTagName(t)[0];
+
+  g.src = BASE_URL + "/packs/js/sdk.js";
+  g.async = true;
+
+  s.parentNode.insertBefore(g,s);
+
+  g.onload = function() {
+    window.chatwootSDK.run({
+      websiteToken: "tuZMd1tkMWCkm2edE8Vod2Di",
+      baseUrl: BASE_URL
+    });
+  };
+})(document,"script");
+</script>
+
+<!-- HUOC_CHAT_WIDGETS_END -->
+
+</body>
+</html>
