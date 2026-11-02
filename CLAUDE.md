@@ -18,6 +18,7 @@ Project rules for anyone (human or Claude) working on this repository. These are
 7. Do not touch unrelated homelab services (NPM hosts other than HUOC, UniFi, Kubernetes, Technitium, Vaultwarden, Uptime Kuma, Cloudflared).
 8. Historical site directories on ZimaBlade (`/home/casaos/Archive`, `/home/casaos/helpdesk`, `/home/casaos/huoc-site-8089`, `/home/casaos/hospiceclone`) are read-only history: never modify or delete them without owner authorization.
 9. ZimaBlade's 27 GB onboard eMMC is small. Builds and state live on `/mnt/Deadpool-1` (1 TB). Keep `/` under 70 % (`huoc-disk-watch.timer` reports; see `docs/RECOVERY.md`).
+10. Branch policy (permanent, owner directive 2026-11-01): `dev` is the permanent development branch and `main` is the protected production branch. **Never delete the `dev` branch**, never force-push, reset or rebase it, and never replace it with another branch. Keep `dev` current by merging `main` into it with a normal merge after each release (`git merge origin/main`); `main` itself changes only through a reviewed PR from `dev`.
 
 ## Everyday commands (on HUOC-UTILITY)
 ```powershell
