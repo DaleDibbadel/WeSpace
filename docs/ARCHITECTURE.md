@@ -38,6 +38,6 @@ No credentials on GitHub or on the Mac, nothing inbound to the homelab, works wh
 
 ## Branches
 - `dev`: integration branch, CI on every push.
-- `staging`: pointer that selects what the staging deployer builds (normally `git branch -f staging dev && git push origin staging`). Negative tests may push broken commits here on purpose.
+- `staging`: legacy pointer; since 2026-11-01 the staging deployer builds `dev` directly (`staging.env BRANCH=dev`). The branch can be deleted once nothing references it.
 - `main`: protected. Still holds the obsolete static site (title "HUOC", `COPY . /usr/share/nginx/html`). PR #18 dev→main is the promotion vehicle; it must be merged so that main's tree equals dev's (see docs/DEPLOYMENT.md "Promotion").
 - Historical: `codex/*` and `DaleDibbadel-patch-1` are untouched.

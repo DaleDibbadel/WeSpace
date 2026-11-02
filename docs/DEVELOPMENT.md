@@ -17,11 +17,7 @@ pnpm dev                     # http://localhost:5173 on the server; forward the 
 pnpm typecheck; pnpm lint; pnpm build
 git add -A; git commit; git push origin dev     # CI runs on GitHub
 ```
-Promote to staging when you want ZimaBlade to build it:
-```powershell
-git branch -f staging dev; git push origin staging
-```
-Within ~2 minutes (after CI is green) `http://10.0.0.201:8091/` serves the new commit; `http://10.0.0.201:8091/DEPLOYED_SHA.txt` tells you which.
+Staging follows `dev` automatically (`staging.env` has `BRANCH=dev` since 2026-11-01): within ~2 minutes of a green CI run `http://10.0.0.201:8091/` serves the new commit; `http://10.0.0.201:8091/DEPLOYED_SHA.txt` tells you which. Production: open a PR dev → main, wait for the required check, merge; `https://helpdesk.homeguardofbill-huoc.com/DEPLOYED_SHA.txt` updates within ~2 minutes.
 
 ## Conventions
 - Do not commit `dist/` changes (legacy tracked build output; the image is built from source). Run `git checkout -- dist` after local builds until dist is untracked.

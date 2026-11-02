@@ -6,7 +6,7 @@ Project rules for anyone (human or Claude) working on this repository. These are
 - The HUOC public website (https://helpdesk.homeguardofbill-huoc.com), a React 19 / Vite 8 / TypeScript / Tailwind 4 / shadcn single-page app, package manager pnpm.
 - **Authoritative source:** GitHub branch `dev` and its working copy on the Windows Server 2025 dev workstation `HUOC-UTILITY` (192.168.2.253), `C:\Users\rooty\Documents\GitHub\WeSpace`.
 - **Production host:** ZimaBlade `10.0.0.201` (Debian 12, Docker, Nginx Proxy Manager). Live container `huoc-prod` on port 8092 (built from `main` by `huoc-deploy@prod.timer`), proxied by NPM host 42. Legacy `huoc-v1` (8090) is kept only as a fallback until the owner retires it.
-- Staging: container `huoc-staging` on port 8091, built from branch `staging` by the pull-based deployer on ZimaBlade. Isolated: own container, image, port and state; never touches `huoc-v1` or NPM.
+- Staging: container `huoc-staging` on port 8091, built from branch `dev` (every push) by the pull-based deployer on ZimaBlade. Isolated: own container, image, port and state; never touches `huoc-v1` or NPM.
 
 ## Hard rules
 1. Development happens on `HUOC-UTILITY` through VS Code Remote-SSH. The Mac (or any laptop) is a remote control, never a dependency: the pipeline must work with it offline.
@@ -24,7 +24,7 @@ Project rules for anyone (human or Claude) working on this repository. These are
 pnpm install --frozen-lockfile   # once per lockfile change
 pnpm dev                         # local dev server
 pnpm typecheck; pnpm lint; pnpm build   # what CI runs
-git push origin dev              # triggers CI; staging follows when `staging` is fast-forwarded to dev
+git push origin dev              # triggers CI; staging (:8091) follows automatically within ~2 min
 ```
 
 ## Where things are
@@ -34,7 +34,7 @@ git push origin dev              # triggers CI; staging follows when `staging` i
 | Image | `Dockerfile` (multi-stage: node:22-alpine build → nginx:alpine), `nginx-default.conf` (SPA fallback), `/DEPLOYED_SHA.txt` baked in |
 | Deployer | `deploy/huoc-deploy.sh` (env-file driven), `deploy/huoc-rollback.sh`, `deploy/staging.env`, `deploy/production.env` (not enabled), `deploy/systemd/huoc-deploy@.{service,timer}` |
 | On ZimaBlade | `/mnt/Deadpool-1/huoc-deploy/{bin,staging.env,production.env,systemd,<instance>/deploy.log,<instance>/deployed.sha,<instance>/builds}` |
-| Docs | `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT.md`, `docs/DEPLOYMENT.md`, `docs/RECOVERY.md`, `docs/VALIDATION.md`, `docs/ZIMABLADE-STORAGE.md` |
+| Docs | **`docs/INFRASTRUCTURE.md` (complete record)**, `docs/ARCHITECTURE.md`, `docs/DEVELOPMENT.md`, `docs/DEPLOYMENT.md`, `docs/RECOVERY.md`, `docs/VALIDATION.md`, `docs/CUTOVER.md`, `docs/ZIMABLADE-STORAGE.md`; inventory in NetBox (device `casahos`, VM `Windows Server 2025` = HUOC-UTILITY, tag `huoc-website`) |
 
 ## Production releases
 A release is a reviewed PR from `dev` to `main`; the timer deploys the merge commit once its CI check-run is green (see docs/DEPLOYMENT.md for the current `ci.yml`-on-main caveat). Never push directly to `main`. Cutover history: docs/CUTOVER.md.

@@ -1,7 +1,7 @@
 # Deployment
 
 ## Staging (active)
-- Instance: `NAME=staging BRANCH=staging PORT=8091 CI_GATE=1` (`deploy/staging.env`, installed at `/mnt/Deadpool-1/huoc-deploy/staging.env`).
+- Instance: `NAME=staging BRANCH=dev PORT=8091 CI_GATE=1` (`deploy/staging.env`, installed at `/mnt/Deadpool-1/huoc-deploy/staging.env`; changed from `BRANCH=staging` to `dev` on 2026-11-01 so every green dev push reaches staging without a manual branch move).
 - Trigger: `huoc-deploy@staging.timer` (every 2 min, 90 s after boot) → `huoc-deploy@staging.service` → `/mnt/Deadpool-1/huoc-deploy/bin/huoc-deploy.sh /mnt/Deadpool-1/huoc-deploy/staging.env`, as user `casaos`, group `docker`. Install/enable with `sudo bash /mnt/Deadpool-1/huoc-deploy/systemd/install-staging-timer.sh` (root; does not enable prod).
 - State: `/mnt/Deadpool-1/huoc-deploy/staging/{deploy.log,deployed.sha,builds/<sha>}`; images `huoc-staging:<sha>`, `:current`, `:previous`; container labels `huoc.sha`, `huoc.deployed`.
 - Manual run (same code path as the timer): `bash /mnt/Deadpool-1/huoc-deploy/bin/huoc-deploy.sh /mnt/Deadpool-1/huoc-deploy/staging.env`.
