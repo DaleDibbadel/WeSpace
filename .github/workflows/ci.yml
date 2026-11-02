@@ -1,10 +1,10 @@
 name: CI
 
-# Validates every push to dev (and any PR targeting main) before promotion.
+# Validates every push to dev, staging and main (and any PR targeting main).
 # Steps: locked install -> typecheck -> lint -> production build -> upload dist as evidence.
 on:
   push:
-    branches: [dev]
+    branches: [dev, staging, main]
   pull_request:
     branches: [main]
   workflow_dispatch:

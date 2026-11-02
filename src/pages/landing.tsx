@@ -98,7 +98,7 @@ export function LandingPage() {
                   HUOC — HomeGuard of Bill
                 </p>
                 <h1 className="font-heading text-4xl font-bold tracking-tight text-balance sm:text-4xl lg:text-5xl xl:text-6xl">
-                  Expertise in
+                  Experts in
                   <br />
                   <span className="typing-cursor bg-gradient-to-l from-primary/50 to-accent bg-clip-text text-transparent">
                     {displayText}
