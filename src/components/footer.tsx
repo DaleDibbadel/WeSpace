@@ -42,6 +42,13 @@ const serviceLinks = [
   },
 ]
 
+// Static legal documents served from /public (plain links: they are outside the SPA router).
+const legalLinks = [
+  { label: "Privacy Policy", href: "/privacy/" },
+  { label: "Legal Notice", href: "/legal-notice/" },
+  { label: "Terms of Service", href: "/terms/" },
+]
+
 export function Footer() {
   return (
     <footer className="border-t border-border/30 px-4 py-20 sm:px-6 sm:py-28">
@@ -120,6 +127,20 @@ export function Footer() {
             <Heart className="h-3.5 w-3.5 animate-pulse text-destructive" />
             <span>by HUOC</span>
           </div>
+          <nav
+            aria-label="Legal documents"
+            className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 font-mono text-xs text-muted-foreground"
+          >
+            {legalLinks.map((link) => (
+              <a
+                key={link.href}
+                href={link.href}
+                className="transition-colors hover:text-primary"
+              >
+                {link.label}
+              </a>
+            ))}
+          </nav>
           <p className="text-center font-mono text-xs text-muted-foreground sm:text-right">
             © {new Date().getFullYear()} HUOC — HomeGuard of Bill
           </p>
