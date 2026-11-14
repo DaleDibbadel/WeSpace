@@ -45,7 +45,17 @@ Work performed under owner directive "HUOC Website Recovery and Legal Policy Dep
 - Live site is served by OpenResty (Nginx Proxy Manager); the website response carries no Cloudflare headers.
 
 ## 7. Git, CI, staging, production, Nextcloud
-Recorded below as each step is verified.
+### 7.1 Commit and push (VERIFIED)
+- Commit `f974e7d97631eae881bc65832fcacac31df3aa53` "(S) legal: add Privacy Policy, Legal Notice, Terms of Service and legal hub; link from footer" — 7 files (5 new public files, footer, this log). `dist/` not committed.
+- `git push origin dev`: `21f8537..f974e7d dev -> dev` (real push; after `git fetch`, `origin/dev` = `f974e7d...`).
+### 7.2 CI (VERIFIED)
+- GitHub Actions run 43549878409 (CI, push to dev, head `f974e7d`): completed / success (typecheck / lint / build).
+### 7.3 Staging (VERIFIED 2026-11-13 ~21:09 local)
+- `huoc-staging` (:8091) `/DEPLOYED_SHA.txt` = `f974e7d97631eae881bc65832fcacac31df3aa53`.
+- HTTP 200 for `/`, `/privacy/`, `/legal-notice/`, `/terms/`, `/legal/`, `/legal-assets/style.css`; page titles correct; privacy page has the `usreport@` mailto links; no internal IPs or credentials in the privacy page; the served site JS contains the footer legal links.
+- Note: `/privacy` (no trailing slash) returns an nginx 301 to `/privacy/`. Footer and Nextcloud use the trailing-slash URLs.
+### 7.4 Production release, live URLs, Nextcloud
+Pending at the time of this commit. Production PR, merge, live HTTP results and Nextcloud configuration are reported in the closing handoff and recorded here by a follow-up docs commit once each is verified.
 
 ## 8. Legally material information NOT verified (owner review)
 1. Legal entity status: HUOC is not stated to be incorporated/registered. Confirm whether a registered entity or assumed-name filing exists.
