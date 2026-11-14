@@ -19,6 +19,13 @@ git add -A; git commit; git push origin dev     # CI runs on GitHub
 ```
 Staging follows `dev` automatically (`staging.env` has `BRANCH=dev` since 2026-11-01): within ~2 minutes of a green CI run `http://10.0.0.201:8091/` serves the new commit; `http://10.0.0.201:8091/DEPLOYED_SHA.txt` tells you which. Production: open a PR dev → main, wait for the required check, merge; `https://helpdesk.homeguardofbill-huoc.com/DEPLOYED_SHA.txt` updates within ~2 minutes.
 
+## Branches (permanent policy)
+- `dev` = the permanent development branch. **Never delete `dev`.** Never force-push, reset or rebase it; if it is ever accidentally removed from GitHub, restore it from the working copy on HUOC-UTILITY (`git push origin dev`), never recreate it from `main`.
+- `main` = the protected production branch (1 approving review, required check `typecheck / lint / build`, up to date, no force-push, no deletion). It changes only through a PR from `dev`.
+- Workflow: VS Code on HUOC-UTILITY -> `dev` -> CI -> staging (:8091) -> PR -> protected `main` -> automatic production deployment (:8092).
+- After a release, bring `dev` level with `main` using a normal merge, never a reset: `git fetch origin; git merge origin/main; git push origin dev` (a fast-forward when `dev` has no new work). Stop and ask the owner if that merge reports conflicts.
+- `staging` is a legacy branch kept for history; the staging deployer follows `dev`, not `staging`.
+
 ## Conventions
 - Do not commit `dist/` changes (legacy tracked build output; the image is built from source). Run `git checkout -- dist` after local builds until dist is untracked.
 - Lint must pass (`eslint.config.js` allows the shadcn `buttonVariants` export).
